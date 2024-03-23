@@ -2,8 +2,18 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Nav } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../actions/userActions";
 
 function Header() {
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(logout());
+  };
+
   return (
     <>
       <Navbar
@@ -47,34 +57,55 @@ function Header() {
                   <Nav.Link className="nav-link">About </Nav.Link>
                 </LinkContainer>
               </li> */}
-              <li className="nav-item dropdown">
-                <LinkContainer to="/account">
-                  <Nav.Link
-                    className="nav-link dropdown-toggle"
-                    data-bs-toggle="dropdown"
-                    role="button"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    Account
-                  </Nav.Link>
-                </LinkContainer>
-                <div className="dropdown-menu">
-                  <LinkContainer to="/settings">
-                    <Nav.Link className="dropdown-item">Settings</Nav.Link>
+              {userInfo ? (
+                <li className="nav-item dropdown">
+                  <LinkContainer to="/">
+                    <Nav.Link
+                      className="nav-link dropdown-toggle"
+                      data-bs-toggle="dropdown"
+                      role="button"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <span>
+                        <i class="fa-solid fa-user"></i>
+                      </span>
+                      &nbsp; {userInfo.name}
+                    </Nav.Link>
                   </LinkContainer>
-                  <LinkContainer to="/login">
-                    <Nav.Link className="dropdown-item">Log In</Nav.Link>
+                  <div className="dropdown-menu">
+                    <LinkContainer to="/settings">
+                      <Nav.Link className="dropdown-item">Settings</Nav.Link>
+                    </LinkContainer>
+                    <div className="dropdown-divider"></div>
+                    <Nav.Link className="dropdown-item" onClick={logoutHandler}>
+                      Log Out
+                    </Nav.Link>
+                  </div>
+                </li>
+              ) : (
+                <li className="nav-item dropdown">
+                  <LinkContainer to="/account">
+                    <Nav.Link
+                      className="nav-link dropdown-toggle"
+                      data-bs-toggle="dropdown"
+                      role="button"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      Account
+                    </Nav.Link>
                   </LinkContainer>
-                  <LinkContainer to="/signup">
-                    <Nav.Link className="dropdown-item">Sign Up</Nav.Link>
-                  </LinkContainer>
-                  <div className="dropdown-divider"></div>
-                  <LinkContainer to="/logout">
-                    <Nav.Link className="dropdown-item">Log Out</Nav.Link>
-                  </LinkContainer>
-                </div>
-              </li>
+                  <div className="dropdown-menu">
+                    <LinkContainer to="/login">
+                      <Nav.Link className="dropdown-item">Log In</Nav.Link>
+                    </LinkContainer>
+                    <LinkContainer to="/signup">
+                      <Nav.Link className="dropdown-item">Sign Up</Nav.Link>
+                    </LinkContainer>
+                  </div>
+                </li>
+              )}
             </ul>
             {/* <form className="d-flex">
               <input
