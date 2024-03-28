@@ -74,6 +74,9 @@ function Header() {
                     </Nav.Link>
                   </LinkContainer>
                   <div className="dropdown-menu">
+                    <LinkContainer to="/profile">
+                      <Nav.Link className="dropdown-item">Profile</Nav.Link>
+                    </LinkContainer>
                     <LinkContainer to="/settings">
                       <Nav.Link className="dropdown-item">Settings</Nav.Link>
                     </LinkContainer>
