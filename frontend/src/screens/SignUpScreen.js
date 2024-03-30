@@ -50,7 +50,7 @@ function SignUpScreen() {
     } else {
       dispatch(signup(fname, lname, email, pass1));
       setMessage("Registration was successful!");
-      navigate("/login");
+      navigate("/settings");
     }
   };
 
