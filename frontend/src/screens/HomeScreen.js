@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import "../App.css";
+
+import { SearchBar } from "../components/SearchBar";
+import { SearchResultsList } from "../components/SearchResultsList";
 
 function HomeScreen() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const userLogin = useSelector((state) => state.userLogin);
-  const { error, loading, userInfo } = userLogin;
-  const redirect = location.search ? location.search.split("=")[1] : "/";
 
-  useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-    }
-  }, [userInfo, redirect]);
+const [results, setResults] = useState([]);
 
-  return <div>HomeScreen</div>;
+  return (
+    <div className="HomeScreen">
+      <div className="search-bar-container">
+        <SearchBar setResults={setResults} />
+        <SearchResultsList results={results} />
+      </div>
+    </div>
+  );
 }
 
 export default HomeScreen;
