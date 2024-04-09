@@ -30,16 +30,18 @@ class UserProfile(models.Model):
 
 
 """--------------------------Room Listing board table----------------------------------"""
-class RoomListing(models.Model):
+class Listing(models.Model):
     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='listings')
     title = models.CharField(max_length=255)
     description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     location = models.CharField(max_length=255)
     available_from = models.DateField()
     duration = models.CharField(max_length=100)  # Example: "3 months", "indefinite", etc.
     preferences = models.TextField(blank=True, null=True)  # Roommate preferences
     created_at = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
+    image = models.ImageField(upload_to='listing_images/', blank=True, null=True) # Requires Pillow library
 
     def __str__(self):
         return self.title
@@ -57,7 +59,7 @@ class Message(models.Model):
 """------------------------------Favorite the unit------------------------------------"""
 class Favorite(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='favorites')
-    listing = models.ForeignKey(RoomListing, on_delete=models.CASCADE, related_name='favorited_by')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='favorited_by')
 
     class Meta:
         unique_together = ('user', 'listing')  # Ensures a user can't favorite the same listing more than once
