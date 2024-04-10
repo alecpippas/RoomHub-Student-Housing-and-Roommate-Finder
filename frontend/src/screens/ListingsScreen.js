@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchListings } from '../actions/listingsActions';
-import { Container, Row, Col, Card } from 'react-bootstrap';
-import { createListing } from '../actions/listingsActions';
+import { fetchListings, createListing } from '../actions/listingsActions';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import CreateListingsScreen from './CreateListingsScreen';
 
 function ListingsScreen() {
   const dispatch = useDispatch();
   const listingsState = useSelector((state) => state.listings);
   const { loading, error, listings } = listingsState;
+  const navigate = useNavigate(); // Hook for navigation
 
   // State for the new listing form
   const [title, setTitle] = useState('');
@@ -34,6 +36,9 @@ function ListingsScreen() {
   return (
     <Container>
       <h1>Available Units</h1>
+
+      <Button onClick={() => navigate('/create_listings')}>Create New Listing</Button> 
+
       {loading ? (
         <div>Loading...</div>
       ) : error ? (

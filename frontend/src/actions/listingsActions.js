@@ -12,7 +12,7 @@ import {
 export const fetchListings = () => async (dispatch) => {
   try {
     dispatch({ type: LISTINGS_REQUEST });
-    const response = await fetch('/api/listings');
+    const response = await fetch('api/listings/');
     const data = await response.json();
     
     dispatch({
@@ -31,7 +31,7 @@ export const createListing = (listingData) => async (dispatch) => {
   try {
     dispatch({ type: LISTINGS_CREATE_REQUEST });
 
-    const { data } = await axios.post('/api/listings/create', listingData, {
+    const { data } = await axios.post('api/listings/create/', listingData, {
       headers: {
         'Content-Type': 'application/json',
       },
