@@ -7,7 +7,7 @@ import SignUpScreen from "./screens/SignUpScreen";
 import LoginScreen from "./screens/LoginScreen";
 import ListingsScreen from "./screens/ListingsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
-import UserProfileScreen from './screens/UserProfileScreen';
+import UserProfileScreen from "./screens/UserProfileScreen";
 
 export default function App() {
   return (
