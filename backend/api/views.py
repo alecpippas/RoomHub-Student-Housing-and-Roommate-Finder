@@ -6,7 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
-from .serializers import UserSerializer, UserSerializerWithToken
+from .serializers import *
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
@@ -15,15 +15,6 @@ from .models import Listing
 from .serializers import ListingSerializer
 from rest_framework.generics import CreateAPIView
 
-
-# for sending verification email and generating tokens
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
-from .utils import TokenGenerator,generate_token
-from django.utils.encoding import force_bytes,force_text,DjangoUnicodeDecodeError
-from django.core.mail import EmailMessage
-from django.conf import settings
-from django.views.generic import View
 
 
 # Create your views here.
@@ -57,6 +48,7 @@ def getUsers(request):
     serializer=UserSerializer(user,many=True)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 def registerUser(request):
     data=request.data
@@ -68,20 +60,6 @@ def registerUser(request):
                                  password=make_password(data['password']),
                                  is_active=True)
         
-        # generate token for sending verification email
-        # email_subject="RoomHub: Activate Your Account"
-        # message=render_to_string(
-        #     "activate.html",
-        #     {
-        #         "user":user,
-        #     # Change this to domain name when deploying for production
-        #         "domain":"127.0.0.1:8000",
-        #         "uid":urlsafe_base64_encode(force_bytes(user.pk)),
-        #         "token":generate_token.make_token(user)
-        #     }
-        # )
-        # email_message=EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [data['email']])
-        # email_message.send()
         serialize=UserSerializerWithToken(user, many=False)
         return Response(serialize.data)
     except Exception as e:
@@ -90,23 +68,38 @@ def registerUser(request):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
 
-class ActivateAccountView(View):
-    def get(self, request, uidb64, token):
-        try:
-            uid=force_text(urlsafe_base64_decode(uidb64))
-            user=User.objects.get(pk=uid)
-        except Exception as identifier:
-            user=None
-        if user is not None and generate_token.check_token(user, token):
-            user.is_active=True
-            user.save()
-            return render(request, "activatesuccess.html")
-        else:
-            return render(request, "activatefail.html")
+@api_view(['GET'])
+def getProfile(request, username):
+    profile=UserProfile.objects.filter(user__username=username).values()
+    data={'username': username}                                                                            
+    for q in profile:
+        for field in q:
+            if field=="id" or field=="user_id":
+                continue
+            data[field]=q[field]
+    serializer = ProfileSerializer(data, many=False)
+    return Response(serializer.data)
 
-            # message={"details":"Account is activated!"}
-            # return Response(message, status=status.HTTP_200_OK)
-        
+
+@api_view(['POST'])
+def editProfile(request):
+    data = request.data
+    print(data)
+    try:
+        obj = UserProfile.objects.filter(user__username=data['username'])
+        print(obj.values())
+        if obj:
+            obj.delete()
+
+        serializer=ProfileSerializer(data=data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+    except Exception as e:
+        message={'details': e}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ListListingsView(APIView):
     def get(self, request, format=None):
         listings = Listing.objects.all()
@@ -117,3 +110,4 @@ class CreateListingView(CreateAPIView):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
     permission_classes = [IsAuthenticated]  # Require users to be authenticated
+
