@@ -4,14 +4,17 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Nav } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions/userActions";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 
 function Header() {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
     dispatch(logout());
+    navigate("/login");
   };
 
   return (
@@ -68,12 +71,15 @@ function Header() {
                       aria-expanded="false"
                     >
                       <span>
-                        <i class="fa-solid fa-user"></i>
+                        <i className="fa-solid fa-user"></i>
                       </span>
                       &nbsp; {userInfo.name}
                     </Nav.Link>
                   </LinkContainer>
                   <div className="dropdown-menu">
+                    <LinkContainer to="/profile">
+                      <Nav.Link className="dropdown-item">Profile</Nav.Link>
+                    </LinkContainer>
                     <LinkContainer to="/settings">
                       <Nav.Link className="dropdown-item">Settings</Nav.Link>
                     </LinkContainer>

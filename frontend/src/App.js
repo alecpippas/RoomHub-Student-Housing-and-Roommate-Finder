@@ -7,6 +7,7 @@ import SignUpScreen from "./screens/SignUpScreen";
 import LoginScreen from "./screens/LoginScreen";
 import ListingsScreen from "./screens/ListingsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import UserProfileScreen from "./screens/UserProfileScreen";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           <Route exact path="/signup" element={<SignUpScreen />}></Route>
           <Route exact path="/settings" element={<SettingsScreen />}></Route>
           <Route exact path="/login" element={<LoginScreen />}></Route>
+          <Route path="/profile" element={<UserProfileScreen />} />
         </Routes>
       </Router>
     </div>

@@ -111,7 +111,7 @@ function SignUpScreen() {
               <Card>
                 <Card.Header
                   as="h3"
-                  className="text-center bg-black text-light "
+                  className="text-center bg-black text-light"
                 >
                   Sign Up
                 </Card.Header>
