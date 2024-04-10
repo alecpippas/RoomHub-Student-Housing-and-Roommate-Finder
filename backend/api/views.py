@@ -9,6 +9,11 @@ from rest_framework import status
 from .serializers import *
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import Listing
+from .serializers import ListingSerializer
+from rest_framework.generics import CreateAPIView
 
 
 
@@ -93,4 +98,16 @@ def editProfile(request):
     except Exception as e:
         message={'details': e}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListListingsView(APIView):
+    def get(self, request, format=None):
+        listings = Listing.objects.all()
+        serializer = ListingSerializer(listings, many=True)
+        return Response(serializer.data)
+    
+class CreateListingView(CreateAPIView):
+    queryset = Listing.objects.all()
+    serializer_class = ListingSerializer
+    permission_classes = [IsAuthenticated]  # Require users to be authenticated
 
