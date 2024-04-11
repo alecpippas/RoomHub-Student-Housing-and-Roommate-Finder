@@ -1,7 +1,9 @@
 from api import views
 from django.urls import path
 from .views import *
-
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+)
 
 urlpatterns = [
     path("", getRoutes,name="getRoutes"),
@@ -14,4 +16,5 @@ urlpatterns = [
     path('listings/', ListListingsView.as_view(), name='list-listings'),
     path('users/profile/display/<str:username>/', views.getProfile, name='getProfile'),
     path('users/profile/update/', views.editProfile, name='update'),
+    path('activate/<uidb64>/<token>', views.ActivateAccountView.as_view(), name='activate')
 ]

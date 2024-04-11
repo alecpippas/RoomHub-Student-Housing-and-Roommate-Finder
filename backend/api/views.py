@@ -1,3 +1,4 @@
+import django
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.response import Response
@@ -14,7 +15,18 @@ from rest_framework.response import Response
 from .models import Listing
 from .serializers import ListingSerializer
 from rest_framework.generics import CreateAPIView
+from verify_email.email_handler import send_verification_email
 
+
+
+# for sending verification email and generating tokens
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
+from .utils import TokenGenerator,generate_token
+from django.utils.encoding import force_bytes,force_text,DjangoUnicodeDecodeError
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.views.generic import View
 
 
 # Create your views here.
@@ -58,13 +70,31 @@ def registerUser(request):
                                  username=data['email'],
                                  email=data['email'],
                                  password=make_password(data['password']),
-                                 is_active=True)
-        
+                                 is_active=False)
+
+        # generate token for sending verification email
+        email_subject="RoomHub: Activate Your Account"
+        message=render_to_string(
+            "activate.html",
+            {
+                "user":data['fname'],
+            # Change this to domain name when deploying for production
+                "domain":"127.0.0.1:8000",
+                "uid":urlsafe_base64_encode(force_bytes(user.pk)),
+                "token":generate_token.make_token(user)
+            }
+        )
+        email_message=EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [data['email']])
+        email_message.send()
+
         serialize=UserSerializerWithToken(user, many=False)
+
         return Response(serialize.data)
     except Exception as e:
-        message={'details': e}
-        print(e)
+        if type(e) == django.db.utils.IntegrityError:
+            message={'details': "Email Is Already Taken"}
+        else:
+            message={'details':e}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -111,3 +141,19 @@ class CreateListingView(CreateAPIView):
     serializer_class = ListingSerializer
     permission_classes = [IsAuthenticated]  # Require users to be authenticated
 
+class ActivateAccountView(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid=force_text(urlsafe_base64_decode(uidb64))
+            user=User.objects.get(pk=uid)
+        except Exception as identifier:
+            user=None
+        if user is not None and generate_token.check_token(user, token):
+            user.is_active=True
+            user.save()
+            return render(request, "activatesuccess.html")
+        else:
+            return render(request, "activatefail.html")
+
+            # message={"details":"Account is activated!"}
+            # return Response(message, status=status.HTTP_200_OK)
