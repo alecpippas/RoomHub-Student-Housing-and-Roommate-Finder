@@ -31,26 +31,33 @@ function SignUpScreen() {
 
   const userSignup = useSelector((state) => state.userSignup);
   const { error, loading, userInfo } = userSignup;
-
+ 
   useEffect(() => {
     if (userInfo) {
       // navigate("/");
     }
-  }, [userInfo, redirect]);
+    // setMessage("")
+  }, [userInfo, error, redirect]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (pass1 !== pass2) {
+    if (error) {
+      console.log(error)
+      setMessage(error)
+      // err = ""
+      dispatch(signup(fname, lname, email, pass1))
+    }
+    else if (pass1 !== pass2) {
       setMessage("Passwords do not match");
-      navigate("/signup");
+      // navigate("/signup");
     } else if (!validEmail.test(email)) {
       setMessage("Invalid Email. Make sure it is a .edu domain");
     } else if (!validPassword.test(pass1)) {
       setMessage("Password does not fit criteria");
     } else {
       dispatch(signup(fname, lname, email, pass1));
-      setMessage("Registration was successful!");
-      navigate("/login");
+      setMessage("Check Email to Verify Account");
+      // navigate("/login");
     }
   };
 
@@ -116,7 +123,9 @@ function SignUpScreen() {
                   Sign Up
                 </Card.Header>
                 <Card.Body>
-                  {message && <Message variant="danger">{message}</Message>}
+                  {message === "Check Email to Verify Account" ? <Message variant="success">{message}</Message>: <></>}
+                  {message && message !== "Check Email to Verify Account" && <Message variant="danger">{message}</Message>}
+                  {/* {setMessage("")} */}
                   {loading && <Loader />}
                   <Form onSubmit={submitHandler}>
                     <Form.Group className="mb-3" controlId="fname">
