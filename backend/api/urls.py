@@ -11,5 +11,8 @@ urlpatterns = [
     path('users/profile/', views.getUserProfile, name='getUserProfile'),
     path('users/', views.getUsers, name='getUsers'),
     path('users/register/', views.registerUser, name='register'),
-    path('activate/<uidb64>/<token>', views.ActivateAccountView.as_view(), name='activate')
+    path('activate/<uidb64>/<token>', views.ActivateAccountView.as_view(), name='activate'),
+    path('listings/', views.getListing, name='getListing'),
+    path('listings/remove', views.removeListing, name='removeListing'),
+    path('listings/update', views.updateListing, name='updateListing')
 ]
