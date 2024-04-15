@@ -47,7 +47,8 @@ class Listing(models.Model):
     preferences = models.TextField(blank=True, null=True)  # Roommate preferences
     created_at = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
-    image = models.ImageField(upload_to='listing_images/', blank=True, null=True) # Requires Pillow library
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    image = models.ImageField(upload_to=None, height_field=None, width_field=None)
 
     def __str__(self):
         return self.title
