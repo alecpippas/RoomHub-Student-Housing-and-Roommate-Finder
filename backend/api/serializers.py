@@ -3,6 +3,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import RoomListing
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import UserProfile, Listing
+
 
 class UserSerializer(serializers.ModelSerializer):
     name=serializers.SerializerMethodField(read_only=True)
@@ -38,7 +40,7 @@ class UserSerializerWithToken(UserSerializer):
     def get_token(self,obj):
         token=RefreshToken.for_user(obj)
         return str(token.access_token)
-    
+
 #serializes data from Room model into JSON for the HTTP Request
 class RoomListingSerializer(serializers.ModelSerializer):
     #custom serializer fields
@@ -52,4 +54,28 @@ class RoomListingSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at',)
     #customer serializer accessor methods
     
-    
+
+class ListingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Listing
+        fields = '__all__'
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=UserProfile
+        fields = [
+            'user',
+            'first_name',
+            'last_name',
+            'profile_picture',
+            'bio',
+            'age',
+            'gender',
+            'school',
+            'pets',
+            'allergies',
+            'budget',
+            'sleep_schedule'
+        ]
+

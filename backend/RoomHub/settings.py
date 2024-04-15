@@ -18,7 +18,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # for forcetext debug code
 import django
+from dotenv import load_dotenv
+import os
 from django.utils.encoding import force_str
+
+load_dotenv()
 django.utils.encoding.force_text=force_str
 
 # Quick-start development settings - unsuitable for production
@@ -83,7 +87,8 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "rest_framework",
     "corsheaders",
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    "verify_email.apps.VerifyEmailConfig"
 ]
 
 MIDDLEWARE = [
@@ -102,6 +107,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
+    
 }
 
 ROOT_URLCONF = "RoomHub.urls"
@@ -182,3 +188,12 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_ID')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
+# EMAIL_HOST_USER = "fhossain7066@bths.edu"
+# EMAIL_HOST_PASSWORD = "q4yne9@TYA3xa3!"
+# DEFAULT_FROM_EMAIL = 'noreply<no_reply@roomhub.com>'

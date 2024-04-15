@@ -1,22 +1,41 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import {
+  Button,
+} from "react-bootstrap";
+import "../App.css";
+
+import { SearchBar } from "../components/SearchBar";
+import { SearchResultsList } from "../components/SearchResultsList";
+import housebg from "../static/housebg.png";
 
 function HomeScreen() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const userLogin = useSelector((state) => state.userLogin);
-  const { error, loading, userInfo } = userLogin;
-  const redirect = location.search ? location.search.split("=")[1] : "/";
 
-  useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-    }
-  }, [userInfo, redirect]);
+const [results, setResults] = useState([]);
 
-  return <div>HomeScreen</div>;
+  return (
+    <div
+      style={{
+        backgroundImage: "url(" + housebg + ")",
+        border: "5px solid black",
+        backgroundPosition: "center",
+        position: "relative",
+        height: "100vh",
+        backgroundRepeat: "repeat",
+      }}
+    >
+      <div className="HomeScreen">
+        <div className="search-bar-container">
+          <SearchBar setResults={setResults} />
+          <SearchResultsList results={results} />
+          <a href="destination-page.html">
+            <Button className="search-button" type="submit">
+             Search
+            </Button>
+          </a>
+        </div>
+      </div>
+    </div> 
+  );
 }
 
 export default HomeScreen;
