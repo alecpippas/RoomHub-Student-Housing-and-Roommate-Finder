@@ -1,7 +1,7 @@
 from rest_framework import serializers
 # from .models import Products
 from django.contrib.auth.models import User
-from .models import RoomListing
+# from .models import RoomListing
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import UserProfile, Listing
 
@@ -47,7 +47,7 @@ class RoomListingSerializer(serializers.ModelSerializer):
     #owner=serializers.SerializerMethodField(read_only=True)
    
     class Meta:
-        model=RoomListing
+        model=Listing
         #currently frontend only supports the following fields from RoomListings model
         #fields from the request body not explicitly listed here will not be updated in the database
         fields=['title','description','price','is_active','created_at']

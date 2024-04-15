@@ -9,7 +9,6 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from .serializers import *
 from django.contrib.auth.models import User
-from .models import RoomListing
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from rest_framework.views import APIView
@@ -172,12 +171,12 @@ def createListing(request):
     try:
         #frontend is only sending the following fields to the backend for now
         #add more fields in the future
-        listing=RoomListing.objects.create(title=data['title'], 
+        listing=Listing.objects.create(title=data['title'], 
                                  description=data['description'], 
                                  price=data['price'],
                                  is_active=True)
         
-        serialize=RoomListingSerializer(listing, many=False)
+        serialize=ListingSerializer(listing, many=False)
         return Response(serialize.data)
     except Exception as e:
         message={'details': e}
@@ -190,15 +189,15 @@ def createListing(request):
 @permission_classes([IsAuthenticated])
 def getListing(request):
     listing=request.user
-    serializer=RoomListingSerializer(listing, many=False)
+    serializer=ListingSerializer(listing, many=False)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def getAllListings(request):
-    listings=RoomListing.objects.all()
-    serializer=RoomListingSerializer(listings, many=True)
+    listings=Listing.objects.all()
+    serializer=ListingSerializer(listings, many=True)
     return Response(serializer.data)
 
 
@@ -251,10 +250,10 @@ def getAllListings(request):
 def updateListing(request):
     listing_id = request.id
     try:
-        listing = RoomListing.objects.get(id=listing_id)
-    except RoomListing.DoesNotExist:
+        listing = Listing.objects.get(id=listing_id)
+    except Listing.DoesNotExist:
         #listing does not exist error message
-        error_message_dne = {'details': 'Listing not found\n' + str(RoomListing.DoesNotExist)}
+        error_message_dne = {'details': 'Listing not found\n' + str(Listing.DoesNotExist)}
         return Response(error_message_dne, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         #general error message
@@ -264,7 +263,7 @@ def updateListing(request):
 
     #check if partial update of the fields only included in the PATCH request
     partial = request.method == 'PATCH'
-    serializer=RoomListingSerializer(listing, data=request.data, many=False, partial=partial)
+    serializer=ListingSerializer(listing, data=request.data, many=False, partial=partial)
 
     if serializer.is_valid():
         serializer.save()
@@ -279,7 +278,7 @@ def updateListing(request):
 def removeListing(request):
     listing_id = request.id
     try:
-        listing = RoomListing.objects.get(id=listing_id)
+        listing = Listing.objects.get(id=listing_id)
         listing.delete()
         success_message = {'details' : f'Listing {listing_id} has successfully been removed.'}
         return Response(success_message)
