@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import UserProfile, Listing, Message, Favorite
 
 
+# regestering models make them accessible (create, read, update, and delete records) through and admin interface
 # Register your models here.
 admin.site.register(UserProfile)
 admin.site.register(Listing)
