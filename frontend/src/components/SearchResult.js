@@ -1,13 +1,14 @@
 import React from 'react';
 import "../App.css";
 
-export const SearchResult = ({ result }) => {
+export const SearchResult = ({ result, searchByTitle }) => {
   return (
     <div 
       className="search-result"
-      onClick={(e) => alert(`You clicked on ${result.name}`)}
+      onClick={(e) => alert(`You clicked on ${result.title} - ${result.location}`)}
     >
-      {result.name}
+      <div className="title">{result.title}</div>
+      <div className="location">{result.location}</div>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Button,
 } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import "../App.css";
 
 import { SearchBar } from "../components/SearchBar";
@@ -10,7 +11,8 @@ import housebg from "../static/housebg.png";
 
 function HomeScreen() {
 
-const [results, setResults] = useState([]);
+  const [results, setResults] = useState([]);
+  const navigate = useNavigate(); // Hook for navigation
 
   return (
     <div
@@ -27,11 +29,9 @@ const [results, setResults] = useState([]);
         <div className="search-bar-container">
           <SearchBar setResults={setResults} />
           <SearchResultsList results={results} />
-          <a href="destination-page.html">
-            <Button className="search-button" type="submit">
-             Search
-            </Button>
-          </a>
+          <Button onClick={() => navigate('/listings')}>
+            Search
+          </Button>
         </div>
       </div>
     </div> 
