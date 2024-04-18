@@ -1,10 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
+import datetime   
 # Create your models here.
 
 """--------------------------User's profile table----------------------------------"""
+
+def upload_to(instance, filename=""):
+    # print('listings/{filename}'.format(filename=filename))
+    return 'listings/{filename}'.format(filename=filename)
+
 class UserProfile(models.Model):    
 
     GENDER_CHOICES = [
@@ -37,23 +42,28 @@ class UserProfile(models.Model):
 
 """--------------------------Room Listing board table----------------------------------"""
 class Listing(models.Model):
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='listings')
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    location = models.CharField(max_length=255)
-    available_from = models.DateField()
-    duration = models.CharField(max_length=100)  # Example: "3 months", "indefinite", etc.
-    preferences = models.TextField(blank=True, null=True)  # Roommate preferences
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings', default=1)
     created_at = models.DateTimeField(default=timezone.now)
-    is_active = models.BooleanField(default=True)
-    price = models.DecimalField(max_digits=7, decimal_places=2)
-    image = models.ImageField(upload_to=None, height_field=None, width_field=None, null=True, blank=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    location = models.CharField(max_length=255, default="")
+    available_from = models.DateField(default=datetime.date.today)
+    duration = models.CharField(max_length=100, blank=True, null=True)  # Example: "3 months", "indefinite", etc.
+    preferences = models.TextField(blank=True, null=True)  # Roommate preferences
+    # is_active = models.BooleanField(default=True)
+    sqft=models.IntegerField(default=0)
+    bedrooms=models.IntegerField(default=0)
+    bathrooms=models.IntegerField(default=0)
+    amenities=models.JSONField(blank=True, null=True)
+    image = models.ImageField(upload_to=upload_to, default='listings/default.jpg')
 
     def __str__(self):
         return self.title
     
-
+class ListingPhoto(models.Model):
+    # created_at = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="photos")
+    image = models.ImageField(upload_to=upload_to, default='listings/default.jpg')
 
 # """--------------------------Room Listing board table----------------------------------"""
 # class RoomListing(models.Model):

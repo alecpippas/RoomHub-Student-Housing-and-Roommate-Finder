@@ -2,9 +2,10 @@ import django
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from .serializers import *
@@ -16,8 +17,7 @@ from rest_framework.response import Response
 from .models import Listing
 from .serializers import ListingSerializer
 from rest_framework.generics import CreateAPIView
-from verify_email.email_handler import send_verification_email
-
+from PIL import Image
 
 
 # for sending verification email and generating tokens
@@ -164,26 +164,38 @@ class ActivateAccountView(View):
 
 #CREATE
 
+@parser_classes([MultiPartParser, FormParser])
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def createListing(request):
+# @permission_classes([IsAuthenticated])
+def createListing(request, format=None):
     data=request.data
+    print(data)
+    count = 0
+    # for x in data['images']:
+    #     count+=1
+    # print(count)
+    # print((data.get('images')))
     try:
-        #frontend is only sending the following fields to the backend for now
-        #add more fields in the future
-        listing=Listing.objects.create(title=data['title'], 
-                                 description=data['description'], 
-                                 price=data['price'],
-                                 is_active=True)
-        
-        serialize=ListingSerializer(listing, many=False)
-        return Response(serialize.data)
+        serializer=ListingSerializer(data=data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            print('yes')
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            print("ELSE")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         message={'details': e}
+        print("FAILED")
         print(e)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 #READ
+
+@api_view(['POST'])
+def uploadListingPhoto(request, format=None):
+    return None
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -3,6 +3,7 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import bg_yellow from "../static/bg_yellow.png";
+import { getProfile } from "../actions/userActions";
 
 function UserProfileScreen() {
   // const userLogin = useSelector((state) => state.userLogin);
@@ -11,12 +12,14 @@ function UserProfileScreen() {
   const userProfile = useSelector((state) => state.userProfile);
   const { error, loading, profile } = userProfile;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!userInfo) {
       navigate("/login");
     }
-  }, []);
+    dispatch(getProfile(userInfo.username));
+  }, [dispatch]);
 
   console.log(profile);
 
