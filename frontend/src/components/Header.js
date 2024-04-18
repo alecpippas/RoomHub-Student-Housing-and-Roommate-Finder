@@ -55,6 +55,11 @@ function Header() {
                   <Nav.Link className="nav-link">Listings</Nav.Link>
                 </LinkContainer>
               </li>
+              <li className="nav-item">
+                <LinkContainer to="/inbox">
+                  <Nav.Link className="nav-link">Inbox</Nav.Link>
+                </LinkContainer>
+              </li>
               {/* <li className="nav-item">
                 <LinkContainer to="/about">
                   <Nav.Link className="nav-link">About </Nav.Link>

@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchListings, createListing } from '../actions/listingsActions';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Navigate, useLocation } from 'react-router-dom';
 
 function CreateListingsScreen() {
+
   const dispatch = useDispatch();
   const listingsState = useSelector((state) => state.listings);
   const { loading, error, listings } = listingsState;
+
 
   // State for the new listing form
   const [title, setTitle] = useState('');
@@ -28,6 +31,15 @@ function CreateListingsScreen() {
     setPrice('');
     setImage('');
   };
+
+    /* --------- This part is to check if user is authentized to view this page --------*/
+    const location = useLocation();
+    const { userInfo } = useSelector(state => state.userLogin);
+    if (!userInfo) {
+        // Redirect them to the login page, but save the current location they were trying to go to
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+    /*-----------------------------------------------------------------------------------*/
 
   return (
     <Container>

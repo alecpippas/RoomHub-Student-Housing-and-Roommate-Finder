@@ -9,6 +9,7 @@ import ListingsScreen from "./screens/ListingsScreen";
 import CreateListingsScreen from "./screens/CreateListingsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import UserProfileScreen from "./screens/UserProfileScreen";
+import InboxScreen from "./screens/InboxScreen";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route exact path="/settings" element={<SettingsScreen />}></Route>
           <Route exact path="/login" element={<LoginScreen />}></Route>
           <Route path="/profile" element={<UserProfileScreen />} />
+          <Route path="/inbox" element={<InboxScreen />} />
         </Routes>
       </Router>
     </div>
