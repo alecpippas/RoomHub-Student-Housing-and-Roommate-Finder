@@ -59,8 +59,8 @@ class ListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Listing
         fields = [
-            'user',
             'created_at',
+            'user',
             'title',
             'description',
             'price',
@@ -72,15 +72,15 @@ class ListingSerializer(serializers.ModelSerializer):
             'sqft',
             'bedrooms',
             'bathrooms',
-            'amenities',
-            'image'
+            'amenities'
+            # 'image'
         ]
 
 
 class ListingPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ListingPhoto
-        fields = ['image']
+        fields = ['created_at', 'image']
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

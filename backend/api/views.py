@@ -131,12 +131,6 @@ def editProfile(request):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ListListingsView(APIView):
-    def get(self, request, format=None):
-        listings = Listing.objects.all()
-        serializer = ListingSerializer(listings, many=True)
-        return Response(serializer.data)
-    
 class CreateListingView(CreateAPIView):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
@@ -169,17 +163,10 @@ class ActivateAccountView(View):
 # @permission_classes([IsAuthenticated])
 def createListing(request, format=None):
     data=request.data
-    print(data)
-    count = 0
-    # for x in data['images']:
-    #     count+=1
-    # print(count)
-    # print((data.get('images')))
     try:
         serializer=ListingSerializer(data=data, many=False)
         if serializer.is_valid():
             serializer.save()
-            print('yes')
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             print("ELSE")
@@ -190,10 +177,26 @@ def createListing(request, format=None):
         print(e)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
-#READ
 
+@parser_classes([MultiPartParser, FormParser])
 @api_view(['POST'])
 def uploadListingPhoto(request, format=None):
+    
+    data=request.data.copy()
+    creationTime=Listing.objects.order_by('created_at').last().created_at
+    data.__setitem__("created_at", creationTime)
+    try:
+        serializer=ListingPhotoSerializer(data=data, many=False)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        message={'details': e}
+        print(e)
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
     return None
 
 
@@ -202,15 +205,24 @@ def uploadListingPhoto(request, format=None):
 def getListing(request):
     listing=request.user
     serializer=ListingSerializer(listing, many=False)
+    print(serializer)
+    
     return Response(serializer.data)
 
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
 def getAllListings(request):
     listings=Listing.objects.all()
+    images = ListingPhoto.objects.all()
+    imageSerializer = ListingPhotoSerializer(images, many=True)
     serializer=ListingSerializer(listings, many=True)
-    return Response(serializer.data)
+    print(serializer.data)
+    print('\n')
+    print(imageSerializer.data)
+    return Response({
+        "postData": serializer.data,
+        "imageData": imageSerializer.data
+        })
 
 
 #READ Multiple listings after Search Bar query or updating filters on listing webpage

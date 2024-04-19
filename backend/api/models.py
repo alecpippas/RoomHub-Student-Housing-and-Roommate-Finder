@@ -42,11 +42,11 @@ class UserProfile(models.Model):
 
 """--------------------------Room Listing board table----------------------------------"""
 class Listing(models.Model):
+    created_at = models.DateTimeField(default=timezone.now, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings', default=1)
-    created_at = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    price = models.IntegerField(default=0)
     location = models.CharField(max_length=255, default="")
     available_from = models.DateField(default=datetime.date.today)
     duration = models.CharField(max_length=100, blank=True, null=True)  # Example: "3 months", "indefinite", etc.
@@ -56,13 +56,15 @@ class Listing(models.Model):
     bedrooms=models.IntegerField(default=0)
     bathrooms=models.IntegerField(default=0)
     amenities=models.JSONField(blank=True, null=True)
-    image = models.ImageField(upload_to=upload_to, default='listings/default.jpg')
+    # image = models.ImageField(upload_to=upload_to, default='listings/default.jpg')
 
     def __str__(self):
+        time = str(self.created_at)
         return self.title
     
 class ListingPhoto(models.Model):
-    # created_at = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="photos")
+    created_at = models.ForeignKey(Listing, to_field="created_at", on_delete=models.CASCADE)
+    # postID = models.DateTimeField(default=timezone.now)
     image = models.ImageField(upload_to=upload_to, default='listings/default.jpg')
 
 # """--------------------------Room Listing board table----------------------------------"""

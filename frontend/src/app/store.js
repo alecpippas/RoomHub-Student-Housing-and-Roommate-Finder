@@ -11,6 +11,7 @@ import {
 import {
   listingsViewReducer,
   listingsCreateReducer,
+  listingsUploadImageReducer,
 } from "../reducers/listingsReducers";
 
 const reducer = combineReducers({
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   userProfile: userProfileReducers,
   listingsView: listingsViewReducer,
   listingsCreate: listingsCreateReducer,
+  listingsUploadImage: listingsUploadImageReducer,
 });
 
 const initialState = {};
