@@ -12,6 +12,7 @@ import {
   listingsViewReducer,
   listingsCreateReducer,
   listingsUploadImageReducer,
+  listingViewReducer,
 } from "../reducers/listingsReducers";
 
 const reducer = combineReducers({
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   userSettings: userSettingsReducers,
   userProfile: userProfileReducers,
   listingsView: listingsViewReducer,
+  listingView: listingViewReducer,
   listingsCreate: listingsCreateReducer,
   listingsUploadImage: listingsUploadImageReducer,
 });

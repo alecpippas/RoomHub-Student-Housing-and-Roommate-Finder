@@ -8,6 +8,12 @@ import {
   LISTINGS_UPLOAD_PHOTO_REQUEST,
   LISTINGS_UPLOAD_PHOTO_SUCCESS,
   LISTINGS_UPLOAD_PHOTO_FAIL,
+  LISTING_REQUEST,
+  LISTING_SUCCESS,
+  LISTING_FAIL,
+  LISTING_DELETE_REQUEST,
+  LISTING_DELETE_SUCCESS,
+  LISTING_DELETE_FAIL,
 } from "../constants/listingsConstants";
 
 export const listingsViewReducer = (state = { listings: [] }, action) => {
@@ -34,6 +40,27 @@ export const listingsViewReducer = (state = { listings: [] }, action) => {
   }
 };
 
+export const listingViewReducer = (state = { listing: [] }, action) => {
+  switch (action.type) {
+    case LISTING_REQUEST:
+      return { loading: true, ...state };
+    case LISTING_SUCCESS:
+      let listingDetails = action.payload.postData[0];
+      listingDetails["image"] = [];
+      for (let i = 0; i < action.payload.imageData.length; i++) {
+        let currImg = action.payload.imageData[i];
+        if (listingDetails["created_at"] === currImg["created_at_id"]) {
+          listingDetails["image"].push(currImg);
+        }
+      }
+      return { loading: false, listing: listingDetails };
+    case LISTING_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
 export const listingsCreateReducer = (state = { listings: [] }, action) => {
   switch (action.type) {
     case LISTINGS_CREATE_REQUEST:
@@ -52,14 +79,30 @@ export const listingsCreateReducer = (state = { listings: [] }, action) => {
 
 export const listingsUploadImageReducer = (state = {}, action) => {
   switch (action.type) {
-    case LISTINGS_CREATE_REQUEST:
+    case LISTINGS_UPLOAD_PHOTO_REQUEST:
       return { loading: true };
-    case LISTINGS_CREATE_SUCCESS:
+    case LISTINGS_UPLOAD_PHOTO_SUCCESS:
       return {
         loading: false,
         image: action.payload,
       };
-    case LISTINGS_CREATE_FAIL:
+    case LISTINGS_UPLOAD_PHOTO_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const listingsDeleteReducer = (state = { listings: [] }, action) => {
+  switch (action.type) {
+    case LISTING_DELETE_REQUEST:
+      return { loading: true, ...state };
+    case LISTING_DELETE_SUCCESS:
+      return {
+        loading: false,
+        listings: action.payload,
+      };
+    case LISTING_DELETE_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

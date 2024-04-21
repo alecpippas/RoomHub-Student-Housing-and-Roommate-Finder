@@ -60,7 +60,7 @@ class ListingSerializer(serializers.ModelSerializer):
         model = Listing
         fields = [
             'created_at',
-            'user',
+            'username',
             'title',
             'description',
             'price',
@@ -68,7 +68,7 @@ class ListingSerializer(serializers.ModelSerializer):
             'available_from',
             'duration',
             'preferences',
-            # 'is_active',
+            'is_active',
             'sqft',
             'bedrooms',
             'bathrooms',

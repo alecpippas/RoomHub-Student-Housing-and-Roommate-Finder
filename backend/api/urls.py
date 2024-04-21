@@ -17,9 +17,11 @@ urlpatterns = [
     
     # path('listings/photo/', createListing, name='createListing'),
 #     path('listings/', views.getListing, name='getListing'),
+
     path('listings/', getAllListings, name='getAllListings'),
-    path('listings/remove', removeListing, name='removeListing'),
-    path('listings/update', updateListing, name='updateListing'),
+    path('listings/<str:pk>/', getListing, name='getListing'),
+    path('listings/update/<str:pk>/', updateListing, name='updateListing'),
+    path('listings/remove/<str:pk>/', removeListing, name='removeListing'),
     path('users/profile/display/<str:username>/', getProfile, name='getProfile'),
     path('users/profile/update/', editProfile, name='update'),
     path('activate/<uidb64>/<token>', ActivateAccountView.as_view(), name='activate')

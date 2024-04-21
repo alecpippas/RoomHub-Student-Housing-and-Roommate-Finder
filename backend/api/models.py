@@ -43,7 +43,8 @@ class UserProfile(models.Model):
 """--------------------------Room Listing board table----------------------------------"""
 class Listing(models.Model):
     created_at = models.DateTimeField(default=timezone.now, unique=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings', default=1)
+    username = models.ForeignKey(User, on_delete=models.CASCADE, to_field="username", related_name='listings')
+    # username = models.TextField(null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     price = models.IntegerField(default=0)
@@ -51,7 +52,7 @@ class Listing(models.Model):
     available_from = models.DateField(default=datetime.date.today)
     duration = models.CharField(max_length=100, blank=True, null=True)  # Example: "3 months", "indefinite", etc.
     preferences = models.TextField(blank=True, null=True)  # Roommate preferences
-    # is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     sqft=models.IntegerField(default=0)
     bedrooms=models.IntegerField(default=0)
     bathrooms=models.IntegerField(default=0)
@@ -67,20 +68,6 @@ class ListingPhoto(models.Model):
     # postID = models.DateTimeField(default=timezone.now)
     image = models.ImageField(upload_to=upload_to, default='listings/default.jpg')
 
-# """--------------------------Room Listing board table----------------------------------"""
-# class RoomListing(models.Model):
-#     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='listings')
-#     title = models.CharField(max_length=255)
-#     description = models.TextField()
-#     location = models.CharField(max_length=255)
-#     available_from = models.DateField()
-#     duration = models.CharField(max_length=100)  # Example: "3 months", "indefinite", etc.
-#     preferences = models.TextField(blank=True, null=True)  # Roommate preferences
-#     created_at = models.DateTimeField(default=timezone.now)
-#     is_active = models.BooleanField(default=True)
-
-#     def __str__(self):
-#         return self.title
     
 # """-------------------------Messege box------------------------------------------------"""
 class Message(models.Model):
