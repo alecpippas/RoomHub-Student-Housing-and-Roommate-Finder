@@ -8,14 +8,22 @@ import {
   userSettingsReducers,
   userProfileReducers,
 } from "../reducers/userReducers";
-import { listingsReducer } from "../reducers/listingsReducers";
+import {
+  listingsViewReducer,
+  listingsCreateReducer,
+  listingsUploadImageReducer,
+  listingViewReducer,
+} from "../reducers/listingsReducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducers,
   userSignup: userSignupReducers,
-  listings: listingsReducer,
   userSettings: userSettingsReducers,
   userProfile: userProfileReducers,
+  listingsView: listingsViewReducer,
+  listingView: listingViewReducer,
+  listingsCreate: listingsCreateReducer,
+  listingsUploadImage: listingsUploadImageReducer,
 });
 
 const initialState = {};

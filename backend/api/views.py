@@ -2,9 +2,10 @@ import django
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from .serializers import *
@@ -16,8 +17,7 @@ from rest_framework.response import Response
 from .models import Listing
 from .serializers import ListingSerializer
 from rest_framework.generics import CreateAPIView
-from verify_email.email_handler import send_verification_email
-
+from PIL import Image
 
 
 # for sending verification email and generating tokens
@@ -131,12 +131,6 @@ def editProfile(request):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ListListingsView(APIView):
-    def get(self, request, format=None):
-        listings = Listing.objects.all()
-        serializer = ListingSerializer(listings, many=True)
-        return Response(serializer.data)
-    
 class CreateListingView(CreateAPIView):
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
@@ -164,41 +158,72 @@ class ActivateAccountView(View):
 
 #CREATE
 
+@parser_classes([MultiPartParser, FormParser])
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def createListing(request):
+# @permission_classes([IsAuthenticated])
+def createListing(request, format=None):
     data=request.data
     try:
-        #frontend is only sending the following fields to the backend for now
-        #add more fields in the future
-        listing=Listing.objects.create(title=data['title'], 
-                                 description=data['description'], 
-                                 price=data['price'],
-                                 is_active=True)
-        
-        serialize=ListingSerializer(listing, many=False)
-        return Response(serialize.data)
+        serializer=ListingSerializer(data=data, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            print("ELSE")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        message={'details': e}
+        print("FAILED")
+        print(e)
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+@parser_classes([MultiPartParser, FormParser])
+@api_view(['POST'])
+def uploadListingPhoto(request, format=None):
+    
+    data=request.data.copy()
+    creationTime=Listing.objects.order_by('created_at').last().created_at
+    data.__setitem__("created_at", creationTime)
+    try:
+        serializer=ListingPhotoSerializer(data=data, many=False)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         message={'details': e}
         print(e)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
-
-#READ
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getListing(request):
-    listing=request.user
-    serializer=ListingSerializer(listing, many=False)
-    return Response(serializer.data)
+    return None
 
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+def getListing(request, pk):
+    created_at=pk
+    postData = Listing.objects.filter(created_at=created_at).values()
+    imageData = ListingPhoto.objects.filter(created_at=created_at).values()
+    return Response({
+        "postData":postData,
+        "imageData":imageData
+        })
+
+
+@api_view(['GET'])
 def getAllListings(request):
     listings=Listing.objects.all()
+    images = ListingPhoto.objects.all()
+    imageSerializer = ListingPhotoSerializer(images, many=True)
     serializer=ListingSerializer(listings, many=True)
-    return Response(serializer.data)
+    print(serializer.data)
+    print('\n')
+    print(imageSerializer.data)
+    return Response({
+        "postData": serializer.data,
+        "imageData": imageSerializer.data
+        })
 
 
 #READ Multiple listings after Search Bar query or updating filters on listing webpage
@@ -245,16 +270,47 @@ def getAllListings(request):
 
 #UPDATE
 
-@api_view(['PUT', 'PATCH'])
-@permission_classes([IsAuthenticated])
-def updateListing(request):
-    listing_id = request.id
+# @api_view(['PUT', 'PATCH'])
+# @permission_classes([IsAuthenticated])
+# def updateListing(request):
+#     listing_id = request.id
+#     try:
+#         listing = Listing.objects.get(id=listing_id)
+#     except Listing.DoesNotExist:
+#         #listing does not exist error message
+#         error_message_dne = {'details': 'Listing not found\n' + str(Listing.DoesNotExist)}
+#         return Response(error_message_dne, status=status.HTTP_404_NOT_FOUND)
+#     except Exception as e:
+#         #general error message
+#         error_message_e = {'details': 'Error: ' + str(e)}
+#         return Response(error_message_e, status=status.HTTP_400_BAD_REQUEST)
+
+
+#     #check if partial update of the fields only included in the PATCH request
+#     partial = request.method == 'PATCH'
+#     serializer=ListingSerializer(listing, data=request.data, many=False, partial=partial)
+
+#     if serializer.is_valid():
+#         serializer.save()
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     else:
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+def updateListing(request, pk):
+    created_at = pk
+    data = request.data
     try:
-        listing = Listing.objects.get(id=listing_id)
-    except Listing.DoesNotExist:
-        #listing does not exist error message
-        error_message_dne = {'details': 'Listing not found\n' + str(Listing.DoesNotExist)}
-        return Response(error_message_dne, status=status.HTTP_404_NOT_FOUND)
+        obj = Listing.objects.filter(created_at=created_at)
+        print(obj.values)
+        if obj:
+            obj.delete()
+        
+        data["created_at"] = created_at
+        serializer = ListingSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
     except Exception as e:
         #general error message
         error_message_e = {'details': 'Error: ' + str(e)}
@@ -274,14 +330,12 @@ def updateListing(request):
 #REMOVE
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def removeListing(request):
-    listing_id = request.id
+def removeListing(request, pk):
     try:
-        listing = Listing.objects.get(id=listing_id)
-        listing.delete()
-        success_message = {'details' : f'Listing {listing_id} has successfully been removed.'}
-        return Response(success_message)
+            obj = Listing.objects.filter(created_at=pk)
+            if obj:
+                obj.delete()
+            return Response(status=status.HTTP_200_OK)
     except Exception as e:
         error_message = {'details': e}
         print(e)
