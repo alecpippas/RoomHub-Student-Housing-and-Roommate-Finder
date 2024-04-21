@@ -1,27 +1,22 @@
 import React, { useEffect } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import bg_yellow from "../static/bg_yellow.png";
+import { useNavigate, useParams } from "react-router-dom";
+import housebg from "../static/housebg.png";
 import { getProfile } from "../actions/userActions";
 
-function UserProfileScreen() {
+function UserProfileScreen({ params }) {
   // const userLogin = useSelector((state) => state.userLogin);
   // const { userInfo } = userLogin;
+  const { id } = useParams();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const userProfile = useSelector((state) => state.userProfile);
   const { error, loading, profile } = userProfile;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-    }
-    dispatch(getProfile(userInfo.username));
+    dispatch(getProfile(id));
   }, [dispatch]);
-
-  console.log(profile);
 
   return (
     <div
@@ -33,10 +28,11 @@ function UserProfileScreen() {
     >
       <div
         style={{
-          backgroundImage: "url(" + bg_yellow + ")",
+          backgroundImage: "url(" + housebg + ")",
           border: "5px solid black",
           backgroundPosition: "center",
           position: "relative",
+          height: "100vh",
           backgroundRepeat: "repeat",
         }}
       >
@@ -51,12 +47,30 @@ function UserProfileScreen() {
                 >
                   User Profile
                 </Card.Header>
+                <Row className="mt-3">
+                  <Col md={4}></Col>
+                  <Col md={4}>
+                    <Image
+                      src={`/media/${profile.profile_picture}`}
+                      style={
+                        {
+                          // display: "block",
+                          // margin: "0 auto",
+                        }
+                      }
+                      rounded
+                      // centered
+                      fluid
+                    />
+                  </Col>
+                </Row>
+                {console.log(profile)}
                 <Card.Body>
                   <p>
-                    <strong>Name:</strong> {userInfo.name}
+                    <strong>Name:</strong> {profile.first_name}
                   </p>
                   <p>
-                    <strong>Email:</strong> {userInfo.email}
+                    <strong>Email:</strong> {id}
                   </p>
                   <p>
                     <strong>Bio:</strong> {profile.bio || "Not provided"}

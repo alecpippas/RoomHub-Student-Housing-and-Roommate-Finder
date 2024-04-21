@@ -89,7 +89,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user',
             'first_name',
             'last_name',
-            'profile_picture',
             'bio',
             'age',
             'gender',
@@ -97,6 +96,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'pets',
             'allergies',
             'budget',
-            'sleep_schedule'
+            'sleep_schedule',
+            'profile_picture'
         ]
 
