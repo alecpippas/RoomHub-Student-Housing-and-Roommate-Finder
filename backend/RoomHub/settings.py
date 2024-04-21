@@ -110,6 +110,9 @@ REST_FRAMEWORK = {
     
 }
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 ROOT_URLCONF = "RoomHub.urls"
 
 TEMPLATES = [

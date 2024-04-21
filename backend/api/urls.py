@@ -12,11 +12,16 @@ urlpatterns = [
     path('users/profile/', getUserProfile, name='getUserProfile'),
     path('users/', getUsers, name='getUsers'),
     path('users/register/', registerUser, name='register'),
-    path('listings/create/', CreateListingView.as_view(), name='create-listing'),
+    path('listings/create/', createListing, name='createListing'),
+    path('listings/uploadImage/', uploadListingPhoto, name='uploadListingPhoto'),
+    
+    # path('listings/photo/', createListing, name='createListing'),
 #     path('listings/', views.getListing, name='getListing'),
-    path('listings/', ListListingsView.as_view(), name='list-listings'),
-    path('listings/remove', removeListing, name='removeListing'),
-    path('listings/update', updateListing, name='updateListing'),
+
+    path('listings/', getAllListings, name='getAllListings'),
+    path('listings/<str:pk>/', getListing, name='getListing'),
+    path('listings/update/<str:pk>/', updateListing, name='updateListing'),
+    path('listings/remove/<str:pk>/', removeListing, name='removeListing'),
     path('users/profile/display/<str:username>/', getProfile, name='getProfile'),
     path('users/profile/update/', editProfile, name='update'),
     path('activate/<uidb64>/<token>', ActivateAccountView.as_view(), name='activate')

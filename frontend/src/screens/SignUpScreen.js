@@ -31,7 +31,7 @@ function SignUpScreen() {
 
   const userSignup = useSelector((state) => state.userSignup);
   const { error, loading, userInfo } = userSignup;
- 
+
   useEffect(() => {
     if (userInfo) {
       // navigate("/");
@@ -42,12 +42,11 @@ function SignUpScreen() {
   const submitHandler = (e) => {
     e.preventDefault();
     if (error) {
-      console.log(error)
-      setMessage(error)
+      console.log(error);
+      setMessage(error);
       // err = ""
-      dispatch(signup(fname, lname, email, pass1))
-    }
-    else if (pass1 !== pass2) {
+      dispatch(signup(fname, lname, email, pass1));
+    } else if (pass1 !== pass2) {
       setMessage("Passwords do not match");
       // navigate("/signup");
     } else if (!validEmail.test(email)) {
@@ -123,8 +122,14 @@ function SignUpScreen() {
                   Sign Up
                 </Card.Header>
                 <Card.Body>
-                  {message === "Check Email to Verify Account" ? <Message variant="success">{message}</Message>: <></>}
-                  {message && message !== "Check Email to Verify Account" && <Message variant="danger">{message}</Message>}
+                  {message === "Check Email to Verify Account" ? (
+                    <Message variant="success">{message}</Message>
+                  ) : (
+                    <></>
+                  )}
+                  {message && message !== "Check Email to Verify Account" && (
+                    <Message variant="danger">{message}</Message>
+                  )}
                   {/* {setMessage("")} */}
                   {loading && <Loader />}
                   <Form onSubmit={submitHandler}>
