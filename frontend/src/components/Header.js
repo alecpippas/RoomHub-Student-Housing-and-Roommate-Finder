@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Nav } from "react-bootstrap";
@@ -15,11 +15,12 @@ function Header() {
   if (!userInfo && userInfoCache) {
     userInfo = userInfoCache;
   }
-
   const logoutHandler = () => {
     dispatch(logout());
     navigate("/login");
   };
+
+  useEffect(() => {}, [userInfo, userInfoCache]);
 
   return (
     <>
@@ -86,7 +87,7 @@ function Header() {
                     </Nav.Link>
                   </LinkContainer>
                   <div className="dropdown-menu">
-                    <LinkContainer to="/profile">
+                    <LinkContainer to={`/profile/${userInfoCache.username}`}>
                       <Nav.Link className="dropdown-item">Profile</Nav.Link>
                     </LinkContainer>
                     <LinkContainer to="/settings">

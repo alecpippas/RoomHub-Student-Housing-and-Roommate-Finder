@@ -165,7 +165,7 @@ function ViewListingScreen({ params }) {
                 }}
               >
                 <Card.Body>
-                  {listing.username_id === userInfo.username ? (
+                  {userInfo && listing.username_id === userInfo.username ? (
                     <Row>
                       <Col xl={3}>
                         <Button
