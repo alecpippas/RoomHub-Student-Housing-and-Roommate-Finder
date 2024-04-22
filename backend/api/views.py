@@ -101,30 +101,37 @@ def registerUser(request):
 
 @api_view(['GET'])
 def getProfile(request, username):
-    profile=UserProfile.objects.filter(user__username=username).values()
-    data={'username': username}                                                                            
+    profile=UserProfile.objects.filter(user=username).values()
+    # print(profile)
+    data={'user': username}                                                                            
     for q in profile:
         for field in q:
             if field=="id" or field=="user_id":
                 continue
             data[field]=q[field]
     serializer = ProfileSerializer(data, many=False)
-    return Response(serializer.data)
+    return Response(data)
 
-
+@parser_classes([MultiPartParser, FormParser])
 @api_view(['POST'])
-def editProfile(request):
+def editProfile(request, format=None):
     data = request.data
     print(data)
     try:
-        obj = UserProfile.objects.filter(user__username=data['username'])
-        print(obj.values())
+        print('qwerty')
+        obj = UserProfile.objects.filter(user=data['user'])
+        print('yes')
         if obj:
             obj.delete()
-
+        if "profile_picture[]" in data:
+            data["profile_picture"] = data["profile_picture[]"]
         serializer=ProfileSerializer(data=data, many=False)
+        print(serializer)
+        print("serializer^")
         if serializer.is_valid():
+            print("IS VALID")
             serializer.save()
+            print("IS SAVED")
             return Response(serializer.data)
     except Exception as e:
         message={'details': e}
