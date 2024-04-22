@@ -578,7 +578,7 @@ function ListingsScreen() {
                         <Card.Body>
                           <Carousel>
                             {listing.image.map((img) => (
-                              <Carousel.Item>
+                              <Carousel.Item key={img.image}>
                                 <img
                                   style={{ borderRadius: "5px" }}
                                   className="d-block w-100"

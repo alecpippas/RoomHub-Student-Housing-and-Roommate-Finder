@@ -27,7 +27,7 @@ export default function App() {
           <Route exact path="/signup" element={<SignUpScreen />}></Route>
           <Route exact path="/settings" element={<SettingsScreen />}></Route>
           <Route exact path="/login" element={<LoginScreen />}></Route>
-          <Route path="/profile" element={<UserProfileScreen />} />
+          <Route path="/profile/:id" element={<UserProfileScreen />} />
           <Route path="/inbox" element={<InboxScreen />} />
         </Routes>
       </Router>

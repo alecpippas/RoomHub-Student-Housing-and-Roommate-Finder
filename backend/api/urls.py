@@ -14,10 +14,6 @@ urlpatterns = [
     path('users/register/', registerUser, name='register'),
     path('listings/create/', createListing, name='createListing'),
     path('listings/uploadImage/', uploadListingPhoto, name='uploadListingPhoto'),
-    
-    # path('listings/photo/', createListing, name='createListing'),
-#     path('listings/', views.getListing, name='getListing'),
-
     path('listings/', getAllListings, name='getAllListings'),
     path('listings/<str:pk>/', getListing, name='getListing'),
     path('listings/update/<str:pk>/', updateListing, name='updateListing'),

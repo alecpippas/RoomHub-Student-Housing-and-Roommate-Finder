@@ -71,7 +71,7 @@ function ViewListingScreen({ params }) {
       setImage(listing.image);
       setAmenities(listing.amenities);
     }
-  }, [dispatch, showModal]);
+  }, [dispatch, showModal, listing.username_id]);
 
   const handleToggleModal = () => {
     setShowModal(!showModal);
@@ -99,6 +99,10 @@ function ViewListingScreen({ params }) {
       ...amenities,
       [name]: !amenities[name],
     });
+  };
+
+  const profileRedirect = (e) => {
+    navigate(`/profile/${listing.username_id}/`);
   };
 
   const submitHandler = (e) => {
@@ -139,8 +143,11 @@ function ViewListingScreen({ params }) {
     <div
       style={{
         backgroundImage: "url(" + housebg + ")",
-        width: "100vw",
+        border: "5px solid black",
+        backgroundPosition: "center",
+        position: "relative",
         height: "100vh",
+        backgroundRepeat: "repeat",
       }}
     >
       <div>
@@ -214,7 +221,7 @@ function ViewListingScreen({ params }) {
                     className="mt-3 text-center"
                     style={{ fontSize: "150%" }}
                   >
-                    <i class="fa-solid fa-location-dot fa-xl"></i>
+                    <i className="fa-solid fa-location-dot fa-xl"></i>
                     &nbsp;&nbsp;Address: {listing.location}
                   </Card.Text>
                 </Card.Body>
@@ -229,7 +236,7 @@ function ViewListingScreen({ params }) {
               <Col sm={12} md={6} lg={4} xl={7} className="p-2">
                 <Card.Text className="ms-3" style={{ color: "white" }}>
                   <i
-                    class="fa-solid fa-file-lines"
+                    className="fa-solid fa-file-lines"
                     style={{ color: "#0091ff" }}
                   ></i>
                   &nbsp;Description: {listing.description}
@@ -269,21 +276,21 @@ function ViewListingScreen({ params }) {
                 </Card.Text>
                 <Card.Text className="ms-3" style={{ color: "white" }}>
                   <i
-                    class="fa-solid fa-users-line"
+                    className="fa-solid fa-users-line"
                     style={{ color: "#0091ff" }}
                   ></i>
                   &nbsp;Roommate Preferences: {listing.preferences}
                 </Card.Text>
                 <Card.Text className="ms-3" style={{ color: "white" }}>
                   <i
-                    class="fa-regular fa-clock"
+                    className="fa-regular fa-clock"
                     style={{ color: "#0091ff" }}
                   ></i>
                   &nbsp;Duration: {listing.duration}
                 </Card.Text>
                 <Card.Text className="ms-3" style={{ color: "white" }}>
                   <i
-                    class="fa-regular fa-calendar-days"
+                    className="fa-regular fa-calendar-days"
                     style={{ color: "#0091ff" }}
                   ></i>
                   &nbsp;Available Move-In Date: {listing.available_from}
@@ -298,9 +305,11 @@ function ViewListingScreen({ params }) {
                       borderRadius: "5px",
                       height: "30px",
                     }}
+                    name={listing.username_id}
+                    onClick={profileRedirect}
                   >
                     <i
-                      class="fa-solid fa-user fa-xl"
+                      className="fa-solid fa-user fa-xl"
                       style={{
                         color: "#0091ff",
                         display: "block",
