@@ -169,7 +169,7 @@ export const updateProfile =
       const { data } = await axios.post(
         "/api/users/profile/update/",
         {
-          username: username,
+          user: username,
           first_name: fname,
           last_name: lname,
           bio: bio,

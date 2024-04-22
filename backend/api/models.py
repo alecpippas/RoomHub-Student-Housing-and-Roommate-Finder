@@ -22,8 +22,8 @@ class UserProfile(models.Model):
         ('O', 'Other'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', default=1)
-    # username = models.CharField(max_length=100, null=True, default="None")
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', default=1)
+    user = models.CharField(max_length=100, primary_key=True, default="None")
     first_name = models.CharField(max_length=100, null=True, blank=True)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     bio = models.TextField(max_length=500, null=True, blank=True)
@@ -40,7 +40,7 @@ class UserProfile(models.Model):
         ordering = ['last_name']
 
     def __str__(self):
-        return self.user.username
+        return self.user
 
 
 """--------------------------Room Listing board table----------------------------------"""

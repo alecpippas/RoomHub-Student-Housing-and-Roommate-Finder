@@ -101,9 +101,9 @@ def registerUser(request):
 
 @api_view(['GET'])
 def getProfile(request, username):
-    profile=UserProfile.objects.filter(user__username=username).values()
+    profile=UserProfile.objects.filter(user=username).values()
     # print(profile)
-    data={'username': username}                                                                            
+    data={'user': username}                                                                            
     for q in profile:
         for field in q:
             if field=="id" or field=="user_id":
@@ -116,9 +116,10 @@ def getProfile(request, username):
 @api_view(['POST'])
 def editProfile(request, format=None):
     data = request.data
-    # print(data)
+    print(data)
     try:
-        obj = UserProfile.objects.filter(user__username=data['username'])
+        print('qwerty')
+        obj = UserProfile.objects.filter(user=data['user'])
         print('yes')
         if obj:
             obj.delete()
