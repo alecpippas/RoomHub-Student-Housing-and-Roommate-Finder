@@ -12,7 +12,12 @@ import housebg from "../static/housebg.png";
 function HomeScreen() {
 
   const [results, setResults] = useState([]);
-  const navigate = useNavigate(); // Hook for navigation
+  const [searchValue, setSearchValue] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    navigate('/listings?search=${encodeURIComponent(searchValue)}');
+  }
 
   return (
     <div
@@ -27,9 +32,9 @@ function HomeScreen() {
     >
       <div className="HomeScreen">
         <div className="search-bar-container">
-          <SearchBar setResults={setResults} />
+          <SearchBar setResults={setResults} onInputChange={setSearchValue} />
           <SearchResultsList results={results} />
-          <Button onClick={() => navigate('/listings')}>
+          <Button onClick={handleSearch}>
             Search
           </Button>
         </div>

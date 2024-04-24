@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-
 import { FaSearch } from "react-icons/fa";
 import "../App.css";
 
-export const SearchBar = ({ setResults }) => {
+export const SearchBar = ({ onInputChange, setResults }) => {
     const [input, setInput] = useState("");
 
     const fetchData = (value) => {
@@ -15,7 +14,7 @@ export const SearchBar = ({ setResults }) => {
               value && 
               listing && 
               listing.title &&
-              listing.title.toLowerCase().includes(value)
+              listing.title.toLowerCase().includes(value.toLowerCase())
             );
           });
           setResults(results);
@@ -23,8 +22,9 @@ export const SearchBar = ({ setResults }) => {
     };
 
     const handleChange = (value) => {
-        setInput(value)
-        fetchData(value)
+        setInput(value);
+        fetchData(value);
+        onInputChange(value);
     }
     
     return (
@@ -36,5 +36,5 @@ export const SearchBar = ({ setResults }) => {
               onChange={(e) => handleChange(e.target.value)}
             />
         </div>
-    )
-}
+    );
+};
