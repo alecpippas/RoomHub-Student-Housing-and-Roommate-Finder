@@ -14,7 +14,7 @@ export const SearchBar = ({ onInputChange, setResults }) => {
               value && 
               listing && 
               listing.title &&
-              listing.title.toLowerCase().includes(value.toLowerCase())
+              listing.title.toLowerCase().startsWith(value.toLowerCase())
             );
           });
           setResults(results);

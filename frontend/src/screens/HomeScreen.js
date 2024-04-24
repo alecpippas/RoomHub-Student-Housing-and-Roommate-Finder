@@ -4,7 +4,6 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import "../App.css";
-
 import { SearchBar } from "../components/SearchBar";
 import { SearchResultsList } from "../components/SearchResultsList";
 import housebg from "../static/housebg.png";
@@ -16,7 +15,7 @@ function HomeScreen() {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    navigate('/listings?search=${encodeURIComponent(searchValue)}');
+    navigate(`/listings?search=${encodeURIComponent(searchValue)}`);
   }
 
   return (
