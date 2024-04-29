@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 # from .models import RoomListing
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import UserProfile, Listing, ListingPhoto
+from .models import UserProfile, Listing, ListingPhoto, Comment, Fav
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -81,6 +81,18 @@ class ListingPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ListingPhoto
         fields = ['created_at', 'image']
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['created_at', "username", 'content']
+
+
+class FavSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fav
+        fields = ['created_at', "username", "title"]
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

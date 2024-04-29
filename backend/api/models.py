@@ -68,7 +68,11 @@ class ListingPhoto(models.Model):
     created_at = models.ForeignKey(Listing, to_field="created_at", on_delete=models.CASCADE)
     image = models.ImageField(upload_to=uploadListingImage, default='listings/default.jpg')
 
-    
+class Comment(models.Model):
+    created_at = models.ForeignKey(Listing, to_field="created_at", on_delete=models.CASCADE)
+    username = models.CharField(max_length=100, null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
+
 # """-------------------------Messege box------------------------------------------------"""
 class Message(models.Model):
     sender = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sent_messages')
@@ -80,12 +84,7 @@ class Message(models.Model):
         return f"From {self.sender.user.username} to {self.recipient.user.username} at {self.timestamp}"
     
 # """------------------------------Favorite the unit------------------------------------"""
-class Favorite(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='favorites')
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='favorited_by')
-
-    class Meta:
-        unique_together = ('user', 'listing')  # Ensures a user can't favorite the same listing more than once
-
-    def __str__(self):
-        return f"{self.user.user.username} favorites {self.listing.title}"  
+class Fav(models.Model):
+    created_at = models.ForeignKey(Listing, to_field="created_at", on_delete=models.CASCADE)
+    username = models.ForeignKey(User, on_delete=models.CASCADE, to_field="username", related_name='fav')
+    title = models.CharField(max_length=100, null=True, blank=True)

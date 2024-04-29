@@ -14,6 +14,9 @@ import {
   LISTING_DELETE_REQUEST,
   LISTING_DELETE_SUCCESS,
   LISTING_DELETE_FAIL,
+  LISTING_VIEW_COMM_REQUEST,
+  LISTING_VIEW_COMM_SUCCESS,
+  LISTING_VIEW_COMM_FAIL,
 } from "../constants/listingsConstants";
 
 export const listingsViewReducer = (state = { listings: [] }, action) => {
@@ -103,6 +106,22 @@ export const listingsDeleteReducer = (state = { listings: [] }, action) => {
         listings: action.payload,
       };
     case LISTING_DELETE_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const listingCommentsReducer = (
+  state = { comments: undefined },
+  action
+) => {
+  switch (action.type) {
+    case LISTING_VIEW_COMM_REQUEST:
+      return { loading: true, ...state };
+    case LISTING_VIEW_COMM_SUCCESS:
+      return { loading: false, comments: action.payload };
+    case LISTING_VIEW_COMM_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

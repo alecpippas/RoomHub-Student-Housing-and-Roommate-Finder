@@ -7,7 +7,9 @@ import {
   updateListing,
   createListingImage,
   deleteListing,
+  getComments,
 } from "../actions/listingsActions";
+import { postComment, checkFav, addFav, delFav } from "../actions/userActions";
 import {
   Container,
   Row,
@@ -26,13 +28,26 @@ import housebg from "../static/housebg.png";
 
 function ViewListingScreen({ params }) {
   const { id } = useParams();
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const listingState = useSelector((state) => state.listingView);
   const { loading, error, listing } = listingState;
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  const listingComments = useSelector((state) => state.listingComments);
+  const { errorComments, loadingComments, comments } = listingComments;
+  let commentHistory = null;
+  if (comments) {
+    commentHistory = comments.data;
+  }
+  const userCheckFav = useSelector((state) => state.userCheckFav);
+  const { errorFav, loadingFav, isFav } = userCheckFav;
+
   const [showModal, setShowModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [flag, setFlag] = useState(false);
+  const [favFlag, setFavFlag] = useState(false);
 
   const [title, setTitle] = useState(listing ? listing.title : "");
   const [description, setDescription] = useState(
@@ -53,6 +68,7 @@ function ViewListingScreen({ params }) {
   const [baths, setBaths] = useState(listing ? listing.bathrooms : "");
   const [image, setImage] = useState(listing ? listing.image : []); //image URL
   const [amenities, setAmenities] = useState(listing ? listing.amenities : {});
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     dispatch(fetchListing(id));
@@ -71,7 +87,11 @@ function ViewListingScreen({ params }) {
       setImage(listing.image);
       setAmenities(listing.amenities);
     }
-  }, [dispatch, showModal, listing.username_id]);
+    if (userInfo) {
+      dispatch(checkFav(userInfo.username, id));
+    }
+    dispatch(getComments(id));
+  }, [dispatch, showModal, listing.username_id, flag, favFlag]);
 
   const handleToggleModal = () => {
     setShowModal(!showModal);
@@ -79,6 +99,16 @@ function ViewListingScreen({ params }) {
 
   const handleToggleAlert = () => {
     setShowAlert(!showAlert);
+  };
+
+  const handleFavorite = () => {
+    dispatch(addFav(userInfo.username, id, listing.title));
+    setFavFlag(!favFlag);
+  };
+
+  const handleUnfavorite = () => {
+    dispatch(delFav(userInfo.username, id));
+    setFavFlag(!favFlag);
   };
 
   const handleDelete = () => {
@@ -104,6 +134,14 @@ function ViewListingScreen({ params }) {
   const profileRedirect = (e) => {
     navigate(`/profile/${listing.username_id}/`);
   };
+
+  const submitComment = () => {
+    dispatch(postComment(userInfo.username, id, comment));
+    setFlag(!flag);
+    setComment("");
+  };
+
+  console.log(isFav);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -146,7 +184,6 @@ function ViewListingScreen({ params }) {
         border: "5px solid black",
         backgroundPosition: "center",
         position: "relative",
-        height: "100vh",
         backgroundRepeat: "repeat",
       }}
     >
@@ -186,7 +223,69 @@ function ViewListingScreen({ params }) {
                       <Col md={{ span: 6 }}>
                         <Card.Text
                           className="text-center mb-2"
-                          style={{ fontSize: "200%" }}
+                          style={{ fontSize: "200%", fontWeight: "bold" }}
+                        >
+                          {listing.title}
+                        </Card.Text>
+                      </Col>
+                    </Row>
+                  ) : userInfo && (!isFav || !isFav.data) ? (
+                    <Row>
+                      <Col xl={3}>
+                        <Button
+                          variant="light"
+                          className="text-center"
+                          onClick={handleFavorite}
+                          style={{
+                            borderRadius: "5px",
+                            height: "40px",
+                            width: "140px",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          Favorite&nbsp;&nbsp;
+                          <i
+                            className="fa-regular fa-heart fa-2xl"
+                            style={{ color: "#ff0000" }}
+                          ></i>
+                        </Button>
+                      </Col>
+                      <Col md={{ span: 6 }}>
+                        <Card.Text
+                          className="text-center mb-2"
+                          style={{ fontSize: "200%", fontWeight: "bold" }}
+                        >
+                          {listing.title}
+                        </Card.Text>
+                      </Col>
+                    </Row>
+                  ) : userInfo && isFav && isFav.data ? (
+                    <Row>
+                      <Col xl={3}>
+                        <Button
+                          variant="light"
+                          className="text-center"
+                          onClick={handleUnfavorite}
+                          style={{
+                            borderRadius: "5px",
+                            height: "40px",
+                            width: "165px",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          Unfavorite&nbsp;&nbsp;
+                          <i
+                            className="fa-solid fa-heart fa-2xl"
+                            style={{ color: "#ff0000" }}
+                          ></i>
+                        </Button>
+                      </Col>
+                      <Col md={{ span: 6 }}>
+                        <Card.Text
+                          className="text-center mb-2"
+                          style={{ fontSize: "200%", fontWeight: "bold" }}
                         >
                           {listing.title}
                         </Card.Text>
@@ -195,7 +294,7 @@ function ViewListingScreen({ params }) {
                   ) : (
                     <Card.Text
                       className="text-center mb-2"
-                      style={{ fontSize: "200%" }}
+                      style={{ fontSize: "200%", fontWeight: "bold" }}
                     >
                       {listing.title}
                     </Card.Text>
@@ -222,7 +321,11 @@ function ViewListingScreen({ params }) {
                     style={{ fontSize: "150%" }}
                   >
                     <i className="fa-solid fa-location-dot fa-xl"></i>
-                    &nbsp;&nbsp;Address: {listing.location}
+                    &nbsp;&nbsp;
+                    <span style={{ color: "#ffbfbf", fontWeight: "bold" }}>
+                      Address:
+                    </span>{" "}
+                    {listing.location}
                   </Card.Text>
                 </Card.Body>
               </Card>
@@ -239,7 +342,11 @@ function ViewListingScreen({ params }) {
                     className="fa-solid fa-file-lines"
                     style={{ color: "#0091ff" }}
                   ></i>
-                  &nbsp;Description: {listing.description}
+                  &nbsp;
+                  <span style={{ color: "#ffbfbf", fontWeight: "bold" }}>
+                    Description:
+                  </span>{" "}
+                  {listing.description}
                 </Card.Text>
                 <Card.Text className="ms-3" style={{ color: "white" }}>
                   <i
@@ -268,7 +375,10 @@ function ViewListingScreen({ params }) {
                     className="fa-solid fa-circle-plus"
                     style={{ color: "#0091ff" }}
                   ></i>
-                  &nbsp;Amenities:
+                  &nbsp;
+                  <span style={{ color: "#ffbfbf", fontWeight: "bold" }}>
+                    Amenities:
+                  </span>
                   {listing.amenities &&
                     Object.keys(listing.amenities).map((a) =>
                       listing.amenities[a] ? " " + a + " |" : <></>
@@ -279,21 +389,33 @@ function ViewListingScreen({ params }) {
                     className="fa-solid fa-users-line"
                     style={{ color: "#0091ff" }}
                   ></i>
-                  &nbsp;Roommate Preferences: {listing.preferences}
+                  &nbsp;
+                  <span style={{ color: "#ffbfbf", fontWeight: "bold" }}>
+                    Roommate Preferences:
+                  </span>{" "}
+                  {listing.preferences}
                 </Card.Text>
                 <Card.Text className="ms-3" style={{ color: "white" }}>
                   <i
                     className="fa-regular fa-clock"
                     style={{ color: "#0091ff" }}
                   ></i>
-                  &nbsp;Duration: {listing.duration}
+                  &nbsp;
+                  <span style={{ color: "#ffbfbf", fontWeight: "bold" }}>
+                    Duration:
+                  </span>{" "}
+                  {listing.duration}
                 </Card.Text>
                 <Card.Text className="ms-3" style={{ color: "white" }}>
                   <i
                     className="fa-regular fa-calendar-days"
                     style={{ color: "#0091ff" }}
                   ></i>
-                  &nbsp;Available Move-In Date: {listing.available_from}
+                  &nbsp;
+                  <span style={{ color: "#ffbfbf", fontWeight: "bold" }}>
+                    Available Move-In Date:
+                  </span>{" "}
+                  {listing.available_from}
                 </Card.Text>
               </Col>
               <Col sm={12} md={6} lg={4} xl={5}>
@@ -317,10 +439,64 @@ function ViewListingScreen({ params }) {
                       }}
                     ></i>
                   </Button>
-                  &nbsp;Uploaded by: {listing.username_id}
+                  &nbsp;{" "}
+                  <span style={{ color: "#ffbfbf", fontWeight: "bold" }}>
+                    Uploaded by:
+                  </span>{" "}
+                  {listing.username_id}
                 </Card.Text>
               </Col>
             </Row>
+          </Card>
+          <Card
+            className="my-4"
+            bg="primary"
+            style={{
+              color: "white",
+              borderRadius: "10px",
+              border: "4px solid white",
+            }}
+          >
+            <Card.Body>
+              <Card.Text style={{ fontSize: "150%", fontWeight: "bold" }}>
+                Comment History
+              </Card.Text>
+              <Row>
+                {userInfo && (
+                  <Form>
+                    <Form.Group className="mb-3" controlId="lname">
+                      <Form.Label>Post Comment</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        type="text"
+                        placeholder="Enter a comment..."
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        required
+                      />
+                    </Form.Group>
+                    <Button
+                      variant="info"
+                      style={{ fontSize: "75%", borderRadius: "7px" }}
+                      onClick={submitComment}
+                    >
+                      Upload Comment
+                    </Button>
+                  </Form>
+                )}
+              </Row>
+              <Row className="mt-3">
+                {commentHistory &&
+                  commentHistory.map((comment) => (
+                    <Card.Text>
+                      <span style={{ fontWeight: "bold", color: "#e3b3ff" }}>
+                        {comment[2]}:
+                      </span>{" "}
+                      {comment[3]}
+                    </Card.Text>
+                  ))}
+              </Row>
+            </Card.Body>
           </Card>
         </Container>
         {listing && (
