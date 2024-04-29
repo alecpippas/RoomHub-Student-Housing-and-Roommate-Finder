@@ -99,6 +99,7 @@ def registerUser(request):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
 
+#currently used instead of the getUserProfile view
 @api_view(['GET'])
 def getProfile(request, username):
     profile=UserProfile.objects.filter(user=username).values()
@@ -126,15 +127,18 @@ def editProfile(request, format=None):
         if "profile_picture[]" in data:
             data["profile_picture"] = data["profile_picture[]"]
         serializer=ProfileSerializer(data=data, many=False)
-        print(serializer)
-        print("serializer^")
-        if serializer.is_valid():
+        #print(serializer)
+        #print("serializer^")
+        if serializer.is_valid(raise_exception=True):
             print("IS VALID")
             serializer.save()
             print("IS SAVED")
             return Response(serializer.data)
+        else:
+            print("Field validation failed.", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        message={'details': e}
+        message={'details': str(e)}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
