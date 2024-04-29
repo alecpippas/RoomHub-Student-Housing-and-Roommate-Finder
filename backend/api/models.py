@@ -1,10 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
+import datetime   
 # Create your models here.
 
 """--------------------------User's profile table----------------------------------"""
+
+def uploadListingImage(instance, filename=""):
+    # print('listings/{filename}'.format(filename=filename))
+    return 'listings/{filename}'.format(filename=filename)
+
+def uploadProfilePicture(instance, filename=""):
+    return 'profiles/{filename}'.format(filename=filename)
+
+
 class UserProfile(models.Model):    
 
     GENDER_CHOICES = [
@@ -13,12 +22,10 @@ class UserProfile(models.Model):
         ('O', 'Other'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', default=1)
-    # username = models.CharField(max_length=100, null=True, default="None")
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', default=1)
+    user = models.CharField(max_length=100, primary_key=True, default="None")
     first_name = models.CharField(max_length=100, null=True, blank=True)
     last_name = models.CharField(max_length=100, null=True, blank=True)
-    # profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
-    profile_picture = models.CharField(max_length=1, null=True, blank=True, default="")
     bio = models.TextField(max_length=500, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
@@ -27,32 +34,42 @@ class UserProfile(models.Model):
     allergies = models.TextField(max_length=500, blank=True, null=True)
     budget = models.IntegerField(null=True, blank=True, default=0)
     sleep_schedule = models.TextField(max_length=500, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to=uploadProfilePicture, default='profiles/default.png')
 
     class Meta:
         ordering = ['last_name']
 
     def __str__(self):
-        return self.user.username
+        return self.user
 
 
 """--------------------------Room Listing board table----------------------------------"""
 class Listing(models.Model):
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='listings')
+    created_at = models.DateTimeField(default=timezone.now, unique=True)
+    username = models.ForeignKey(User, on_delete=models.CASCADE, to_field="username", related_name='listings')
     title = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    location = models.CharField(max_length=255)
-    available_from = models.DateField()
-    duration = models.CharField(max_length=100)  # Example: "3 months", "indefinite", etc.
+    description = models.TextField(null=True, blank=True)
+    price = models.IntegerField(default=0)
+    location = models.CharField(max_length=255, default="")
+    available_from = models.DateField(default=datetime.date.today)
+    duration = models.CharField(max_length=100, blank=True, null=True)  # Example: "3 months", "indefinite", etc.
     preferences = models.TextField(blank=True, null=True)  # Roommate preferences
-    created_at = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
-    image = models.ImageField(upload_to='listing_images/', blank=True, null=True) # Requires Pillow library
+    sqft=models.IntegerField(default=0)
+    bedrooms=models.IntegerField(default=0)
+    bathrooms=models.IntegerField(default=0)
+    amenities=models.JSONField(blank=True, null=True)
 
     def __str__(self):
+        time = str(self.created_at)
         return self.title
     
-"""-------------------------Messege box------------------------------------------------"""
+class ListingPhoto(models.Model):
+    created_at = models.ForeignKey(Listing, to_field="created_at", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=uploadListingImage, default='listings/default.jpg')
+
+    
+# """-------------------------Messege box------------------------------------------------"""
 class Message(models.Model):
     sender = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='received_messages')
@@ -62,7 +79,7 @@ class Message(models.Model):
     def __str__(self):
         return f"From {self.sender.user.username} to {self.recipient.user.username} at {self.timestamp}"
     
-"""------------------------------Favorite the unit------------------------------------"""
+# """------------------------------Favorite the unit------------------------------------"""
 class Favorite(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='favorites')
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='favorited_by')
@@ -72,71 +89,3 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.user.username} favorites {self.listing.title}"  
-    
-
-
-
-
-
-
-
-
-# class UserProfile(models.Model):    
-
-#     GENDER_CHOICES = [
-#         ('M', 'Male'),
-#         ('F', 'Female'),
-#         ('O', 'Other'),
-#     ]
-
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-#     first_name = models.CharField(max_length=100)
-#     last_name = models.CharField(max_length=100)
-#     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
-#     age = models.IntegerField(null=True, blank=True)
-#     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
-#     school = models.CharField(max_length=255, null=True, blank=True)
-#     pets = models.BooleanField(default=False)
-#     allergies = models.TextField(max_length=500, blank=True, null=True)
-#     budget = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-#     sleep_schedule = models.TextField(max_length=500, blank=True, null=True)
-
-#     def __str__(self):
-#         return self.user.username
-
-
-# """--------------------------Room Listing board table----------------------------------"""
-# class RoomListing(models.Model):
-#     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='listings')
-#     title = models.CharField(max_length=255)
-#     description = models.TextField()
-#     location = models.CharField(max_length=255)
-#     available_from = models.DateField()
-#     duration = models.CharField(max_length=100)  # Example: "3 months", "indefinite", etc.
-#     preferences = models.TextField(blank=True, null=True)  # Roommate preferences
-#     created_at = models.DateTimeField(default=timezone.now)
-#     is_active = models.BooleanField(default=True)
-
-#     def __str__(self):
-#         return self.title
-    
-# """-------------------------Messege box------------------------------------------------"""
-# class Message(models.Model):
-#     sender = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sent_messages')
-#     recipient = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='received_messages')
-#     content = models.TextField()
-#     timestamp = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return f"From {self.sender.user.username} to {self.recipient.user.username} at {self.timestamp}"
-    
-# """------------------------------Favorite the unit------------------------------------"""
-# class Favorite(models.Model):
-#     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='favorites')
-#     listing = models.ForeignKey(RoomListing, on_delete=models.CASCADE, related_name='favorited_by')
-
-#     class Meta:
-#         unique_together = ('user', 'listing')  # Ensures a user can't favorite the same listing more than once
-
-#     def __str__(self):
-#         return f"{self.user.user.username} favorites {self.listing.title}"  

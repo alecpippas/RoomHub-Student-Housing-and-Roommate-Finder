@@ -8,9 +8,13 @@ import { redirect, useNavigate, useParams } from "react-router-dom";
 
 function Header() {
   const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
+  let { userInfo } = userLogin;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userInfoCache = JSON.parse(localStorage.getItem("userInfo"));
+  if (!userInfo && userInfoCache) {
+    userInfo = userInfoCache;
+  }
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -55,6 +59,11 @@ function Header() {
                   <Nav.Link className="nav-link">Listings</Nav.Link>
                 </LinkContainer>
               </li>
+              <li className="nav-item">
+                <LinkContainer to="/inbox">
+                  <Nav.Link className="nav-link">Inbox</Nav.Link>
+                </LinkContainer>
+              </li>
               {/* <li className="nav-item">
                 <LinkContainer to="/about">
                   <Nav.Link className="nav-link">About </Nav.Link>
@@ -73,7 +82,7 @@ function Header() {
                       <span>
                         <i className="fa-solid fa-user"></i>
                       </span>
-                      &nbsp; {userInfo.name}
+                      &nbsp; {userInfo.name || userInfoCache.username}
                     </Nav.Link>
                   </LinkContainer>
                   <div className="dropdown-menu">

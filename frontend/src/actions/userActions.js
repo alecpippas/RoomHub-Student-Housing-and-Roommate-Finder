@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getState } from "react";
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
@@ -48,8 +49,8 @@ export const signup = (fname, lname, email, password) => async (dispatch) => {
     dispatch({
       type: USER_SIGNUP_FAIL,
       payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
+        error.response && error.response.data.details
+          ? error.response.data.details
           : error.message,
     });
   }
@@ -126,7 +127,6 @@ export const updateProfile =
     username,
     fname,
     lname,
-    profilePicture,
     bio,
     age,
     gender,
@@ -134,21 +134,34 @@ export const updateProfile =
     pets,
     allergies,
     budget,
-    sleep_schedule
+    sleep_schedule,
+    profile_picture
   ) =>
   async (dispatch) => {
     try {
       dispatch({
         type: USER_UPDATE_PROFILE_REQUEST,
       });
-
       // const {
       //   userLogin: { userInfo },
       // } = getState(); // Assuming you store logged-in user info in state
-
+      console.log([
+        username,
+        fname,
+        lname,
+        bio,
+        age,
+        gender,
+        school,
+        pets,
+        allergies,
+        budget,
+        sleep_schedule,
+        profile_picture,
+      ]);
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
           // Authorization: `Bearer ${userInfo.token}`, // Assuming your backend uses token-based auth
         },
       };
@@ -156,10 +169,9 @@ export const updateProfile =
       const { data } = await axios.post(
         "/api/users/profile/update/",
         {
-          username: username,
+          user: username,
           first_name: fname,
           last_name: lname,
-          profile_picture: profilePicture,
           bio: bio,
           age: age,
           gender: gender,
@@ -168,10 +180,10 @@ export const updateProfile =
           allergies: allergies,
           budget: budget,
           sleep_schedule: sleep_schedule,
+          profile_picture: profile_picture,
         },
         config
       );
-
       dispatch({
         type: USER_UPDATE_PROFILE_SUCCESS,
         payload: data,
