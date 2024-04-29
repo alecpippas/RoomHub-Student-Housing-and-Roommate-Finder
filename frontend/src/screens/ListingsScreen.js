@@ -18,7 +18,7 @@ import {
 } from "react-bootstrap";
 import { redirect, useNavigate } from "react-router-dom";
 import housebg from "../static/housebg.png";
-import queryString from 'query-string';
+import queryString from "query-string";
 
 function ListingsScreen() {
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ function ListingsScreen() {
   const [image, setImage] = useState([]); //image URL
   const [amenities, setAmenities] = useState({});
   const [showModal, setShowModal] = useState(false);
-  
+
   const { search: searchQuery } = queryString.parse(location.search);
 
   const listingRedirect = (e) => {
@@ -83,10 +83,11 @@ function ListingsScreen() {
     dispatch(fetchListings());
   }, [dispatch, showModal]);
 
-  const filteredListings = searchQuery 
-    ? listings.filter(listing => 
+  const filteredListings = searchQuery
+    ? listings.filter((listing) =>
         listing.title.toLowerCase().startsWith(searchQuery.toLowerCase())
-      ) : listings;
+      )
+    : listings;
 
   // Handle form submission
   const submitHandler = async (e) => {
@@ -124,8 +125,11 @@ function ListingsScreen() {
     <div
       style={{
         backgroundImage: "url(" + housebg + ")",
-        width: "100vw",
+        border: "5px solid black",
+        backgroundPosition: "center",
+        position: "relative",
         height: "100vh",
+        backgroundRepeat: "repeat",
       }}
     >
       <div>
