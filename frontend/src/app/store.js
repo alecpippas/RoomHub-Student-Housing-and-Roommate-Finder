@@ -7,12 +7,18 @@ import {
   userSignupReducers,
   userSettingsReducers,
   userProfileReducers,
+  userPostCommentReducers,
+  userAddFavReducers,
+  userGetFavsReducers,
+  userCheckFavReducers,
+  userDelFavReducer,
 } from "../reducers/userReducers";
 import {
   listingsViewReducer,
   listingsCreateReducer,
   listingsUploadImageReducer,
   listingViewReducer,
+  listingCommentsReducer,
 } from "../reducers/listingsReducers";
 
 const reducer = combineReducers({
@@ -24,6 +30,12 @@ const reducer = combineReducers({
   listingView: listingViewReducer,
   listingsCreate: listingsCreateReducer,
   listingsUploadImage: listingsUploadImageReducer,
+  userPostComment: userPostCommentReducers,
+  listingComments: listingCommentsReducer,
+  userAddFav: userAddFavReducers,
+  userGetFavs: userGetFavsReducers,
+  userCheckFav: userCheckFavReducers,
+  userDelFav: userDelFavReducer,
 });
 
 const initialState = {};

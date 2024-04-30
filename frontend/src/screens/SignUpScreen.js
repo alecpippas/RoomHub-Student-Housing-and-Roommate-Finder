@@ -88,12 +88,6 @@ function SignUpScreen() {
           border: "5px solid black",
           backgroundPosition: "center",
           position: "relative",
-          // top: "45%",
-          // left: "50%",
-          // transform: "translate(-50%, -50%)",
-          // width: "75vw",
-          // height: "80vh",
-          // borderRadius: "20px",
           backgroundRepeat: "repeat",
         }}
       >

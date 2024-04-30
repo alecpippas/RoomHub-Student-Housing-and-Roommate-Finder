@@ -197,6 +197,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_ID')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
-# EMAIL_HOST_USER = "fhossain7066@bths.edu"
-# EMAIL_HOST_PASSWORD = "q4yne9@TYA3xa3!"
 # DEFAULT_FROM_EMAIL = 'noreply<no_reply@roomhub.com>'
