@@ -1,29 +1,35 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 
 function MessageUserScreen() {
   const { userId } = useParams();
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleMessageSubmit = async () => {
     if (!message.trim()) return; // Check if message is not just empty spaces
 
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('/api/send-message/', {
-        receiver: userId,
-        message: message
-      }, {
+      console.log("yo");
+      const config = {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      navigate('/inbox'); // Redirect after sending
+          "Content-Type": "application/json",
+        },
+      };
+
+      await axios.post(
+        "api/send-message/",
+        {
+          receiver: userId,
+          message: message,
+        },
+        config
+      );
+      navigate("/inbox"); // Redirect after sending
     } catch (error) {
-      console.error('Failed to send message:', error);
-      alert('Failed to send message, please try again.');
+      console.error("Failed to send message:", error);
+      alert("Failed to send message, please try again.");
     }
   };
 

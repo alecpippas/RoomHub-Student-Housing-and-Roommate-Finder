@@ -350,7 +350,6 @@ def removeListing(request, pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def send_message(request):
     data = request.data
     serializer = MessageSerializer(data={
@@ -365,7 +364,6 @@ def send_message(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def receive_messages(request):
     paginator = PageNumberPagination()
     paginator.page_size = 10  

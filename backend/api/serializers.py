@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 # from .models import RoomListing
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import UserProfile, Listing, ListingPhoto, Comment, Fav
+from .models import UserProfile, Listing, ListingPhoto, Comment, Fav, Message
 
 
 
