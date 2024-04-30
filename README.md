@@ -16,7 +16,7 @@ In the frontend terminal run:
 npm install
 ```
 
-```
+
 2. In your terminal, navigate to your project directory. Run the following commands to apply initial database migrations:
 ```
 python manage.py makemigrations
