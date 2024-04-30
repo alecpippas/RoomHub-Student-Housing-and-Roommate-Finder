@@ -348,33 +348,6 @@ def removeListing(request, pk):
         print(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def send_message(request):
-    data = request.data
-    serializer = MessageSerializer(data={
-        'sender': request.user.id, 
-        'receiver': data.get('receiver'),  
-        'message': data.get('message') 
-    })
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def receive_messages(request):
-    paginator = PageNumberPagination()
-    paginator.page_size = 10  
-
-    messages = Message.objects.filter(receiver=request.user).order_by('-timestamp')
-    result_page = paginator.paginate_queryset(messages, request)
-    serializer = MessageSerializer(result_page, many=True)
-    return paginator.get_paginated_response(serializer.data)
-
 @api_view(['POST'])
 def postComment(request):
     
@@ -475,3 +448,28 @@ def delFav(request):
         error_message = {'details': e}
         print(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+# Message system
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sendMessage(request):
+    print(request.headers)  # Check what headers are being received
+    #`receiver_id` and `message` are passed in the request data
+    data = {
+        'sender': request.user.id,
+        'receiver': request.data.get('receiver_id'),
+        'message': request.data.get('message')
+    }
+    serializer = MessageSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMessages(request):
+    user = request.user
+    messages = Message.objects.filter(receiver=request.user).order_by('-timestamp')
+    serializer = MessageSerializer(messages, many=True)
+    return Response(serializer.data)

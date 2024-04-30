@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "query-string": "^9.0.0",
     "react-icons": "^5.0.1"
   }
 }
