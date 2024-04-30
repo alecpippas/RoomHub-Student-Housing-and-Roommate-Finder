@@ -20,5 +20,7 @@ urlpatterns = [
     path('listings/remove/<str:pk>/', removeListing, name='removeListing'),
     path('users/profile/display/<str:username>/', getProfile, name='getProfile'),
     path('users/profile/update/', editProfile, name='update'),
-    path('activate/<uidb64>/<token>', ActivateAccountView.as_view(), name='activate')
+    path('activate/<uidb64>/<token>', ActivateAccountView.as_view(), name='activate'),
+    path('send-message/', send_message, name='send_message'),
+    path('receive-messages/', receive_messages, name='receive_messages')
 ]
