@@ -11,6 +11,7 @@ import UserProfileScreen from "./screens/UserProfileScreen";
 import InboxScreen from "./screens/InboxScreen";
 import ViewListingScreen from "./screens/ViewListingScreen";
 import MessageUserScreen from "./screens/MessageUserScreen"
+import FavoritesScreen from "./screens/FavoritesScreen";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route exact path="/settings" element={<SettingsScreen />}></Route>
           <Route exact path="/login" element={<LoginScreen />}></Route>
           <Route path="/profile/:id" element={<UserProfileScreen />} />
+          <Route path="/favorites/:id" element={<FavoritesScreen />} />
           <Route path="/inbox" element={<InboxScreen />} />
           <Route path="/message/:id" element={<MessageUserScreen />} />
         </Routes>

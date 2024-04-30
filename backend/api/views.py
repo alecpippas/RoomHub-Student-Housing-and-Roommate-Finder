@@ -14,8 +14,7 @@ from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Listing, Message
-from .serializers import ListingSerializer, MessageSerializer
+from .models import *
 from rest_framework.generics import CreateAPIView
 from PIL import Image
 from rest_framework.pagination import PageNumberPagination
@@ -100,6 +99,7 @@ def registerUser(request):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     
 
+#currently used instead of the getUserProfile view
 @api_view(['GET'])
 def getProfile(request, username):
     profile=UserProfile.objects.filter(user=username).values()
@@ -119,23 +119,22 @@ def editProfile(request, format=None):
     data = request.data
     print(data)
     try:
-        print('qwerty')
         obj = UserProfile.objects.filter(user=data['user'])
-        print('yes')
         if obj:
             obj.delete()
         if "profile_picture[]" in data:
             data["profile_picture"] = data["profile_picture[]"]
         serializer=ProfileSerializer(data=data, many=False)
-        print(serializer)
-        print("serializer^")
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             print("IS VALID")
+
             serializer.save()
-            print("IS SAVED")
             return Response(serializer.data)
+        else:
+            print("Field validation failed.", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        message={'details': e}
+        message={'details': str(e)}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -177,11 +176,9 @@ def createListing(request, format=None):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            print("ELSE")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         message={'details': e}
-        print("FAILED")
         print(e)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
@@ -206,6 +203,8 @@ def uploadListingPhoto(request, format=None):
         print(e)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     return None
+
+
 
 
 @api_view(['GET'])
@@ -376,3 +375,103 @@ def receive_messages(request):
     serializer = MessageSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
 
+@api_view(['POST'])
+def postComment(request):
+    
+    data=request.data.copy()
+    creationTime=Listing.objects.filter(created_at=data['created_at']).values_list("created_at")[0][0]
+    # print(creationTime.values_list("created_at")[0])
+    print((creationTime))
+    print(type(creationTime))
+    data['created_at'] = creationTime
+    print(data)
+    try:
+        serializer=CommentSerializer(data=data, many=False)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        message={'details': e}
+        print(e)
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    return None
+
+@api_view(['GET'])
+def getComments(request, pk):
+    created_at = pk
+    # unitRentID = request.data.get('unitRentID')
+    results = Comment.objects.filter(created_at=created_at).values_list()
+    # print(results)
+    data = []
+    for res in results:
+        data.append(res)
+    
+
+    return Response({"data": data})
+
+
+
+@api_view(["POST"])  # Allows only POST requests to this view.
+def addFav(request):
+    data=request.data
+    print(data)
+    try:
+        serializer=FavSerializer(data=data, many=False)
+        print(serializer)
+        if serializer.is_valid():
+            print("yes")
+            serializer.save()
+            print("yes")
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        message={'details': e}
+        print(e)
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(["GET"])
+def getFavs(request, pk):
+    print("holy")
+    usernaame=pk
+    favorites = Fav.objects.filter(username=usernaame).values()
+    print(favorites)
+    return Response({
+        "data": favorites
+        })
+    
+
+@api_view(['POST'])
+def checkFav(request):
+    username = request.data.get("username")
+    created_at = request.data.get("created_at")
+    try:
+        favObj = Fav.objects.filter(username=username, created_at=created_at)
+        print(favObj)
+        
+        if favObj:
+            return JsonResponse({'data': True}, status=200)
+        
+        return JsonResponse({'data': False}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def delFav(request):
+    username = request.data.get("username")
+    created_at = request.data.get("created_at")
+    try:
+            obj = Fav.objects.filter(created_at=created_at, username=username)
+            if obj:
+                obj.delete()
+            return Response(status=status.HTTP_200_OK)
+    except Exception as e:
+        error_message = {'details': e}
+        print(e)
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
