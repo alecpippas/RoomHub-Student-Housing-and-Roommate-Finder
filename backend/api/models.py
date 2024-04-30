@@ -81,6 +81,18 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['-timestamp']
+        verbose_name = 'Message'
+        verbose_name_plural = 'Messages'
+    
+    def mark_read(self):
+        self.read = True
+        self.save()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
     
