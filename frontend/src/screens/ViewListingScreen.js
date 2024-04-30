@@ -457,7 +457,7 @@ function ViewListingScreen({ params }) {
                       justifyContent: "center",
                       margin: "10px 0",
                     }}
-                  onClick={() => navigate(`/message/${listing.username_id}`)} // Adjust based on your app's routing
+                  onClick={() => navigate(`/message/${listing.username_id}`)} 
                   >
                   Message Owner
                   </Button>

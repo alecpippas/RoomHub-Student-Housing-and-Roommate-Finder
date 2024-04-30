@@ -32,7 +32,7 @@ export default function App() {
           <Route path="/profile/:id" element={<UserProfileScreen />} />
           <Route path="/favorites/:id" element={<FavoritesScreen />} />
           <Route path="/inbox" element={<InboxScreen />} />
-          <Route path="/message/:id" element={<MessageUserScreen />} />
+          <Route path="/message/:userId" element={<MessageUserScreen />} />
         </Routes>
       </Router>
     </div>
