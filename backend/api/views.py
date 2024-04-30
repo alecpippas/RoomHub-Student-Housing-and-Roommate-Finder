@@ -473,3 +473,28 @@ def delFav(request):
         error_message = {'details': e}
         print(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+# Message system
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sendMessage(request):
+    print(request.headers)  # Check what headers are being received
+    #`receiver_id` and `message` are passed in the request data
+    data = {
+        'sender': request.user.id,
+        'receiver': request.data.get('receiver_id'),
+        'message': request.data.get('message')
+    }
+    serializer = MessageSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMessages(request):
+    user = request.user
+    messages = Message.objects.filter(receiver=request.user).order_by('-timestamp')
+    serializer = MessageSerializer(messages, many=True)
+    return Response(serializer.data)

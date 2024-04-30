@@ -183,5 +183,3 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['id', 'sender', 'receiver', 'message', 'timestamp', 'read']
-    def create(self, validated_data):
-        return super().create(validated_data)
