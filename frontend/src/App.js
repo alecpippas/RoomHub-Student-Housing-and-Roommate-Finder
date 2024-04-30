@@ -10,6 +10,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import UserProfileScreen from "./screens/UserProfileScreen";
 import InboxScreen from "./screens/InboxScreen";
 import ViewListingScreen from "./screens/ViewListingScreen";
+import MessageUserScreen from "./screens/MessageUserScreen"
 import FavoritesScreen from "./screens/FavoritesScreen";
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/profile/:id" element={<UserProfileScreen />} />
           <Route path="/favorites/:id" element={<FavoritesScreen />} />
           <Route path="/inbox" element={<InboxScreen />} />
+          <Route path="/message/:id" element={<MessageUserScreen />} />
         </Routes>
       </Router>
     </div>

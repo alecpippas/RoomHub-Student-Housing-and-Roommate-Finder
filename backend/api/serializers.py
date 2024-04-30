@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import UserProfile, Listing, ListingPhoto, Comment, Fav
 
 
+
 class UserSerializer(serializers.ModelSerializer):
     name=serializers.SerializerMethodField(read_only=True)
     _id=serializers.SerializerMethodField(read_only=True)
@@ -178,3 +179,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         
     
 
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'receiver', 'message', 'timestamp', 'read']
+    def create(self, validated_data):
+        return super().create(validated_data)

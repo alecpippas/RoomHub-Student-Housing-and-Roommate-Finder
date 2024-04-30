@@ -21,10 +21,13 @@ urlpatterns = [
     path('users/profile/display/<str:username>/', getProfile, name='getProfile'),
     path('users/profile/update/', editProfile, name='update'),
     path('activate/<uidb64>/<token>', ActivateAccountView.as_view(), name='activate'),
+    path('send-message/', send_message, name='send_message'),
+    path('receive-messages/', receive_messages, name='receive_messages'),
     path('postComment/', postComment, name='postComment'),
     path('getComments/<str:pk>/', getComments, name='getComments'),
     path('addFav/', addFav, name='addFav'),
     path('getFavs/<str:pk>/', getFavs, name='getFavs'),
     path('checkFav/', checkFav, name='checkFav'),
     path('delFav/', delFav, name='delFav'),
+
 ]

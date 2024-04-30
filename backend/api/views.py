@@ -14,9 +14,10 @@ from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Listing
+from .models import *
 from rest_framework.generics import CreateAPIView
 from PIL import Image
+from rest_framework.pagination import PageNumberPagination
 
 
 # for sending verification email and generating tokens
@@ -348,6 +349,31 @@ def removeListing(request, pk):
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_message(request):
+    data = request.data
+    serializer = MessageSerializer(data={
+        'sender': request.user.id, 
+        'receiver': data.get('receiver'),  
+        'message': data.get('message') 
+    })
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def receive_messages(request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 10  
+
+    messages = Message.objects.filter(receiver=request.user).order_by('-timestamp')
+    result_page = paginator.paginate_queryset(messages, request)
+    serializer = MessageSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 @api_view(['POST'])
 def postComment(request):

@@ -445,6 +445,23 @@ function ViewListingScreen({ params }) {
                   </span>{" "}
                   {listing.username_id}
                 </Card.Text>
+                <Card.Text className="ms-3" style={{ color: "white" }}>
+                  <Button
+                    variant="info"
+                    style={{
+                      borderRadius: "5px",
+                      height: "40px",
+                      width: "140px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      margin: "10px 0",
+                    }}
+                  onClick={() => navigate(`/message/${listing.username_id}`)} // Adjust based on your app's routing
+                  >
+                  Message Owner
+                  </Button>
+                </Card.Text>
               </Col>
             </Row>
           </Card>
