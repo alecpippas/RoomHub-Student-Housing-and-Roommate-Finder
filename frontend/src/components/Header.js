@@ -90,6 +90,11 @@ function Header() {
                     <LinkContainer to={`/profile/${userInfoCache.username}`}>
                       <Nav.Link className="dropdown-item">Profile</Nav.Link>
                     </LinkContainer>
+                    <LinkContainer to={`/favorites/${userInfoCache.username}`}>
+                      <Nav.Link className="dropdown-item">
+                        Favorite Listings
+                      </Nav.Link>
+                    </LinkContainer>
                     <LinkContainer to="/settings">
                       <Nav.Link className="dropdown-item">Settings</Nav.Link>
                     </LinkContainer>
@@ -123,16 +128,6 @@ function Header() {
                 </li>
               )}
             </ul>
-            {/* <form className="d-flex">
-              <input
-                className="form-control me-sm-2"
-                type="search"
-                placeholder="Search"
-              />
-              <button className="btn btn-secondary my-2 my-sm-0" type="submit">
-                Search
-              </button>
-            </form> */}
           </div>
         </div>
       </Navbar>

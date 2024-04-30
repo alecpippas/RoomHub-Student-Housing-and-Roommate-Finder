@@ -14,6 +14,21 @@ import {
   USER_GET_PROFILE_REQUEST,
   USER_GET_PROFILE_SUCCESS,
   USER_GET_PROFILE_FAIL,
+  USER_POST_COMM_REQUEST,
+  USER_POST_COMM_SUCCESS,
+  USER_POST_COMM_FAIL,
+  USER_FAV_REQUEST,
+  USER_FAV_SUCCESS,
+  USER_FAV_FAIL,
+  USER_GET_FAVS_REQUEST,
+  USER_GET_FAVS_SUCCESS,
+  USER_GET_FAVS_FAIL,
+  USER_CHECK_FAV_REQUEST,
+  USER_CHECK_FAV_SUCCESS,
+  USER_CHECK_FAV_FAIL,
+  USER_DEL_FAV_REQUEST,
+  USER_DEL_FAV_SUCCESS,
+  USER_DEL_FAV_FAIL,
 } from "../constants/userConstants";
 
 axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
@@ -200,3 +215,178 @@ export const updateProfile =
       });
     }
   };
+
+export const postComment =
+  (username, created_at, comment) => async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_POST_COMM_REQUEST,
+      });
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      console.log(username, created_at, comment);
+
+      const { data } = await axios.post(
+        "/api/postComment/",
+        {
+          username: username,
+          created_at: created_at,
+          content: comment,
+        },
+        config
+      );
+
+      dispatch({
+        type: USER_POST_COMM_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_POST_COMM_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
+
+export const addFav = (username, created_at, title) => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_FAV_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    console.log(username, created_at);
+    const { data } = await axios.post(
+      `api/addFav/`,
+      {
+        username: username,
+        created_at: created_at,
+        title: title,
+      },
+      config
+    );
+
+    dispatch({
+      type: USER_FAV_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_FAV_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const getFavs = (username) => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_GET_FAVS_REQUEST,
+    });
+
+    // console.log(username);
+    const { data } = await axios.get(`api/getFavs/${username}`);
+
+    dispatch({
+      type: USER_GET_FAVS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_GET_FAVS_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const checkFav = (username, created_at) => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_CHECK_FAV_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    console.log(username);
+    const { data } = await axios.post(
+      `api/checkFav/`,
+      {
+        username: username,
+        created_at: created_at,
+      },
+      config
+    );
+
+    dispatch({
+      type: USER_CHECK_FAV_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_CHECK_FAV_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const delFav = (username, created_at) => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_DEL_FAV_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    console.log(username);
+    const { data } = await axios.post(
+      `api/delFav/`,
+      {
+        username: username,
+        created_at: created_at,
+      },
+      config
+    );
+
+    dispatch({
+      type: USER_DEL_FAV_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_DEL_FAV_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};

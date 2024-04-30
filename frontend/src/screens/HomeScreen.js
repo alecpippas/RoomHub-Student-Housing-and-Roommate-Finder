@@ -2,15 +2,21 @@ import { useState } from "react";
 import {
   Button,
 } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import "../App.css";
-
 import { SearchBar } from "../components/SearchBar";
 import { SearchResultsList } from "../components/SearchResultsList";
 import housebg from "../static/housebg.png";
 
 function HomeScreen() {
 
-const [results, setResults] = useState([]);
+  const [results, setResults] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    navigate(`/listings?search=${encodeURIComponent(searchValue)}`);
+  }
 
   return (
     <div
@@ -25,13 +31,11 @@ const [results, setResults] = useState([]);
     >
       <div className="HomeScreen">
         <div className="search-bar-container">
-          <SearchBar setResults={setResults} />
+          <SearchBar setResults={setResults} onInputChange={setSearchValue} />
           <SearchResultsList results={results} />
-          <a href="destination-page.html">
-            <Button className="search-button" type="submit">
-             Search
-            </Button>
-          </a>
+          <Button onClick={handleSearch}>
+            Search
+          </Button>
         </div>
       </div>
     </div> 
