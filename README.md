@@ -140,7 +140,6 @@ npm test
 This project was developed as part of CS-GY 6063 at NYU Tandon School of Engineering.
 
 **Original Team:**
-- Team 1 - Backend API, Authentication, Database Design
 
 - Alec Pippas (Github: alecpippas)  - Backend Views, Database, Testing, Docs, SCRUM
 - Faiyaad Hossain (Github: Fyd-Hssn) - Frontend Components, UI/UX, System Design
